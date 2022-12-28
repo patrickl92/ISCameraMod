@@ -35,7 +35,18 @@
 				return;
 			}
 
-			var versionInfo = JsonConvert.DeserializeObject<SerializableVersionInfo>(data);
+			SerializableVersionInfo versionInfo;
+
+			try
+			{
+				versionInfo = JsonConvert.DeserializeObject<SerializableVersionInfo>(data);
+			}
+			catch (JsonReaderException exception)
+			{
+				Log($"Could not deserialize data as JSON: {exception.Message}");
+				return;
+			}
+
 			if (versionInfo == null)
 			{
 				Log("Deserialized version info is null");
