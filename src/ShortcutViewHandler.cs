@@ -33,7 +33,8 @@
 			{
 				if (_inputWrapper.IsSaveModifierKeyPressed())
 				{
-					shortcutViewsChanged = SavePosition(numpadKey.Value);
+					SavePosition(numpadKey.Value);
+					shortcutViewsChanged = true;
 				}
 				else
 				{
@@ -44,7 +45,7 @@
 			return shortcutViewsChanged;
 		}
 
-		private bool SavePosition(int numpadKey)
+		private void SavePosition(int numpadKey)
 		{
 			Log($"Saving current camera position for numpad key '{numpadKey}'");
 
@@ -54,8 +55,6 @@
 			}
 
 			ShortcutViews.Add(numpadKey, _cameraWrapper.GetPlayerCameraPosition());
-
-			return true;
 		}
 
 		private void ApplyPosition(int numpadKey)
