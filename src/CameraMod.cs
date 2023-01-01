@@ -27,11 +27,11 @@
 		 */
 		[JsonProperty("SerializedData")]
 		private string _serializedData;
-		
+
 		public CameraMod()
 		{
 			_serializer = new CameraModSerializer(new ISLogger<CameraModSerializer>());
-			_shortcutViewHandler = new ShortcutViewHandler(new ISLogger<ShortcutViewHandler>());
+			_shortcutViewHandler = new ShortcutViewHandler(new UnityInputWrapper(), new ISLogger<ShortcutViewHandler>());
 		}
 
 		public override void Load()

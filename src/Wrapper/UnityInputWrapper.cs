@@ -1,8 +1,8 @@
-﻿namespace ISCameraMod
+﻿namespace ISCameraMod.Wrapper
 {
 	using UnityEngine;
 
-	internal static class UnityInputWrapper
+	internal class UnityInputWrapper : IInputWrapper
 	{
 		private static readonly KeyCode[] NumpadKeyCodes =
 		{
@@ -18,7 +18,7 @@
 			KeyCode.Keypad9
 		};
 		
-		public static int? GetPressedNumpadKey()
+		public int? GetPressedNumpadKey()
 		{
 			for (int i = 0; i < NumpadKeyCodes.Length; i++)
 			{
@@ -31,7 +31,7 @@
 			return null;
 		}
 		
-		public static bool IsSaveModifierKeyPressed()
+		public bool IsSaveModifierKeyPressed()
 		{
 			if (Input.GetKey(KeyCode.LeftShift)
 			    || Input.GetKey(KeyCode.RightShift)
