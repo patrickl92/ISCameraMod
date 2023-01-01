@@ -53,7 +53,7 @@
 				ShortcutViews.Remove(numpadKey);
 			}
 
-			ShortcutViews.Add(numpadKey, _cameraWrapper.GetCurrentPlayerCameraPosition());
+			ShortcutViews.Add(numpadKey, _cameraWrapper.GetPlayerCameraPosition());
 
 			return true;
 		}
@@ -68,7 +68,7 @@
 
 			Log($"Applying saved camera position for numpad key '{numpadKey}'");
 
-			_cameraWrapper.SetCurrentPlayerCameraPosition(ShortcutViews[numpadKey]);
+			_cameraWrapper.SetPlayerCameraPosition(ShortcutViews[numpadKey]);
 		}
 
 		private void Log(string message)

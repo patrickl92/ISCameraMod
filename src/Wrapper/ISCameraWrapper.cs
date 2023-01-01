@@ -4,7 +4,7 @@
 
 	internal class ISCameraWrapper : ICameraWrapper
 	{
-		public CameraPosition GetCurrentPlayerCameraPosition()
+		public CameraPosition GetPlayerCameraPosition()
 		{
 			// Create a serializable instance of the InfraSpace CameraMovement and then save the position data from this instance
 			var serializableCameraMovement = new CameraMovement.Serializable(WorldScripts.Inst.cameraMovement);
@@ -18,7 +18,7 @@
 			};
 		}
 
-		public void SetCurrentPlayerCameraPosition(CameraPosition cameraPosition)
+		public void SetPlayerCameraPosition(CameraPosition cameraPosition)
 		{
 			// Create a serializable instance of the InfraSpace CameraMovement and then use this instance to apply the position
 			var serializableCameraMovement = new CameraMovement.Serializable

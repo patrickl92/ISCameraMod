@@ -4,9 +4,9 @@
 
 	public interface ICameraWrapper
 	{
-		CameraPosition GetCurrentPlayerCameraPosition();
+		CameraPosition GetPlayerCameraPosition();
 
-		void SetCurrentPlayerCameraPosition(CameraPosition cameraPosition);
+		void SetPlayerCameraPosition(CameraPosition cameraPosition);
 
 		bool IsPlayerCameraActive();
 	}
