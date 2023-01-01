@@ -1,6 +1,7 @@
 ﻿namespace ISCameraMod.Serialization
 {
 	using System.Collections.Generic;
+	using ISCameraMod.Model;
 	using ISCameraMod.Serialization.V1;
 	using ISCameraMod.Wrapper;
 	using Newtonsoft.Json;

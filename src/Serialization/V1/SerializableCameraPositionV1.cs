@@ -1,6 +1,7 @@
 ﻿namespace ISCameraMod.Serialization.V1
 {
 	using System;
+	using ISCameraMod.Model;
 
 	[Serializable]
 	public class SerializableCameraPositionV1

@@ -1,5 +1,7 @@
 ﻿namespace ISCameraMod.Wrapper
 {
+	using ISCameraMod.Model;
+
 	internal class ISCameraWrapper : ICameraWrapper
 	{
 		public CameraPosition GetCurrentPlayerCameraPosition()

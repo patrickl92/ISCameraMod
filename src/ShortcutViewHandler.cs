@@ -2,6 +2,7 @@
 {
 	using System;
 	using System.Collections.Generic;
+	using ISCameraMod.Model;
 	using ISCameraMod.Wrapper;
 
 	public class ShortcutViewHandler

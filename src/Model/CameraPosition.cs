@@ -1,4 +1,4 @@
-﻿namespace ISCameraMod
+﻿namespace ISCameraMod.Model
 {
 	using UnityEngine;
 
