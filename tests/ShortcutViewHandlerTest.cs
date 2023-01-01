@@ -126,12 +126,15 @@
 			var target = CreateTarget();
 
 			target.ShortcutViews.Add(3, new CameraPosition { Position = new Vector3(6, 5, 4), RotationX = 3, RotationY = 2, ZoomLevel = 1 });
+			target.ShortcutViews.Add(4, new CameraPosition { Position = new Vector3(5, 6, 4), RotationX = 2, RotationY = 1, ZoomLevel = 3 });
 
 			var result = target.FrameUpdate();
 
-			Assert.AreEqual(1, target.ShortcutViews.Count, "No camera position was saved");
+			Assert.AreEqual(2, target.ShortcutViews.Count, "Wrong count of camera positions");
 			Assert.IsTrue(target.ShortcutViews.ContainsKey(3), "Camera position was saved with a wrong key");
-			Assert.AreEqual(new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 }, target.ShortcutViews[3]);
+			Assert.IsTrue(target.ShortcutViews.ContainsKey(4), "Camera position with key 4 was removed");
+			Assert.AreEqual(new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 }, target.ShortcutViews[3], "Camera position with key 3 was not updated");
+			Assert.AreEqual(new CameraPosition { Position = new Vector3(5, 6, 4), RotationX = 2, RotationY = 1, ZoomLevel = 3}, target.ShortcutViews[4], "Camera position with key 4 must not have changed");
 			Assert.IsTrue(result);
 		}
 
