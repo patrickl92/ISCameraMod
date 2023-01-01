@@ -2,7 +2,6 @@
 {
 	using System;
 	using ISCameraMod.Serialization;
-	using ISCameraMod.Wrapper;
 	using Newtonsoft.Json;
 
 	[Serializable]
@@ -30,8 +29,8 @@
 
 		public CameraMod()
 		{
-			_serializer = new CameraModSerializer(new ISLogger<CameraModSerializer>());
-			_shortcutViewHandler = new ShortcutViewHandler(new UnityInputWrapper(), new ISCameraWrapper(), new ISLogger<ShortcutViewHandler>());
+			_serializer = CameraModFactory.CreateSerializerFunc();
+			_shortcutViewHandler = CameraModFactory.CreateShortcutViewHandlerFunc();
 		}
 
 		public override void Load()
