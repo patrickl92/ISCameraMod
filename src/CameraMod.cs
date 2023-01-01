@@ -2,6 +2,7 @@
 {
 	using System;
 	using ISCameraMod.Serialization;
+	using ISCameraMod.Wrapper;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -22,10 +23,13 @@
 	public class CameraMod : Mod
 	{
 		[JsonIgnore] // Do not serialize this field
-		private readonly IShortcutViewHandler _shortcutViewHandler;
+		private readonly ISerializer _serializer;
 
 		[JsonIgnore] // Do not serialize this field
-		private readonly ISerializer _serializer;
+		private readonly ICameraWrapper _cameraWrapper;
+
+		[JsonIgnore] // Do not serialize this field
+		private readonly IShortcutViewHandler _shortcutViewHandler;
 
 		/// <summary>
 		/// This field is used for persisting the camera positions to the current game, so they will be available when the game is loaded again.
@@ -38,8 +42,11 @@
 		/// </summary>
 		public CameraMod()
 		{
+			var inputWrapper = CameraModFactory.CreateInputWrapperFunc();
+
 			_serializer = CameraModFactory.CreateSerializerFunc();
-			_shortcutViewHandler = CameraModFactory.CreateShortcutViewHandlerFunc();
+			_cameraWrapper = CameraModFactory.CreateCameraWrapperFunc();
+			_shortcutViewHandler = CameraModFactory.CreateShortcutViewHandlerFunc(inputWrapper, _cameraWrapper);
 		}
 
 		/// <summary>
@@ -68,10 +75,12 @@
 
 		/// <summary>
 		/// Gets called once per frame.
-		/// The call is forwarded to the <see cref="ShortcutViewHandler"/> and the current mod data is serialized if something has changed.
+		/// The call is forwarded to the required instances and the current mod data is serialized if something has changed.
 		/// </summary>
 		public override void FrameUpdate()
 		{
+			_cameraWrapper.FrameUpdate();
+
 			if (_shortcutViewHandler.FrameUpdate())
 			{
 				// New/changed camera position, serialize the data so it will be persisted when the mod class is serialized by InfraSpace

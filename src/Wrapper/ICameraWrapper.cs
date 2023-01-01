@@ -8,6 +8,11 @@
 	public interface ICameraWrapper
 	{
 		/// <summary>
+		/// Updates the movement of the camera.
+		/// </summary>
+		void FrameUpdate();
+
+		/// <summary>
 		/// Gets the current camera position of the player in the world.
 		/// </summary>
 		/// <returns>The current camera position.</returns>
@@ -17,7 +22,7 @@
 		/// Sets the current camera position of the player in the world.
 		/// </summary>
 		/// <param name="cameraPosition">The camera position to set.</param>
-		void SetPlayerCameraPosition(CameraPosition cameraPosition);
+		void MovePlayerCameraToPosition(CameraPosition cameraPosition);
 
 		/// <summary>
 		/// Get a value indicating whether the player camera is currently active.

@@ -84,7 +84,7 @@
 
 			Log($"Applying saved camera position for numpad key '{numpadKey}'");
 
-			_cameraWrapper.SetPlayerCameraPosition(ShortcutViews[numpadKey]);
+			_cameraWrapper.MovePlayerCameraToPosition(ShortcutViews[numpadKey]);
 		}
 
 		private void Log(string message)

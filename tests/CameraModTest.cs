@@ -5,6 +5,7 @@
 	using ISCameraMod;
 	using ISCameraMod.Model;
 	using ISCameraMod.Serialization;
+	using ISCameraMod.Wrapper;
 	using Microsoft.VisualStudio.TestTools.UnitTesting;
 	using Moq;
 	using Newtonsoft.Json;
@@ -15,7 +16,8 @@
 	public class CameraModTest
 	{
 		private Mock<ISerializer> _serializerMock;
-
+		private Mock<IInputWrapper> _inputWrapperMock;
+		private Mock<ICameraWrapper> _cameraWrapperMock;
 		private Mock<IShortcutViewHandler> _shortcutViewHandlerMock;
 
 		private Dictionary<int, CameraPosition> _shortcutViews;
@@ -24,13 +26,22 @@
 		public void TestInitialize()
 		{
 			_serializerMock = new Mock<ISerializer>(MockBehavior.Strict);
+			_inputWrapperMock = new Mock<IInputWrapper>(MockBehavior.Strict);
+			_cameraWrapperMock = new Mock<ICameraWrapper>(MockBehavior.Strict);
 			_shortcutViewHandlerMock = new Mock<IShortcutViewHandler>(MockBehavior.Strict);
 
 			_shortcutViews = new Dictionary<int, CameraPosition>();
 			_shortcutViewHandlerMock.SetupGet(h => h.ShortcutViews).Returns(_shortcutViews);
 
 			CameraModFactory.CreateSerializerFunc = () => _serializerMock.Object;
-			CameraModFactory.CreateShortcutViewHandlerFunc = () => _shortcutViewHandlerMock.Object;
+			CameraModFactory.CreateInputWrapperFunc = () => _inputWrapperMock.Object;
+			CameraModFactory.CreateCameraWrapperFunc = () => _cameraWrapperMock.Object;
+			CameraModFactory.CreateShortcutViewHandlerFunc = (inputWrapper, cameraWrapper) =>
+			{
+				Assert.AreSame(_inputWrapperMock.Object, inputWrapper, "Unexpected inputWrapper instance was provided");
+				Assert.AreSame(_cameraWrapperMock.Object, cameraWrapper, "Unexpected cameraWrapper instance was provided");
+				return _shortcutViewHandlerMock.Object;
+			};
 		}
 
 		[TestCleanup]
@@ -39,6 +50,8 @@
 			CameraModFactory.ResetFactoryFunctions();
 
 			_serializerMock = null;
+			_inputWrapperMock = null;
+			_cameraWrapperMock = null;
 			_shortcutViewHandlerMock = null;
 			_shortcutViews = null;
 		}
@@ -116,13 +129,29 @@
 		}
 
 		[TestMethod]
-		public void FrameUpdate_ShortcutViewHandlerReturnsFalse_DataIsNotSerialized()
+		public void FrameUpdate_CallsFrameUpdateOfCameraWrapper()
 		{
+			_cameraWrapperMock.Setup(w => w.FrameUpdate());
 			_shortcutViewHandlerMock.Setup(h => h.FrameUpdate()).Returns(false);
 
 			var target = CreateTarget();
 
 			target.FrameUpdate();
+
+			_cameraWrapperMock.Verify(h => h.FrameUpdate(), Times.Once, "Method was not called");
+		}
+
+		[TestMethod]
+		public void FrameUpdate_ShortcutViewHandlerReturnsFalse_DataIsNotSerialized()
+		{
+			_cameraWrapperMock.Setup(w => w.FrameUpdate());
+			_shortcutViewHandlerMock.Setup(h => h.FrameUpdate()).Returns(false);
+
+			var target = CreateTarget();
+
+			target.FrameUpdate();
+
+			_shortcutViewHandlerMock.Verify(h => h.FrameUpdate(), Times.Once, "Method was not called");
 
 			var jsonString = JsonConvert.SerializeObject(target);
 			var json = (JObject)JsonConvert.DeserializeObject(jsonString);
@@ -133,12 +162,15 @@
 		[TestMethod]
 		public void FrameUpdate_ShortcutViewHandlerReturnsTrue_DataIsSerialized()
 		{
+			_cameraWrapperMock.Setup(w => w.FrameUpdate());
 			_serializerMock.Setup(s => s.Serialize(_shortcutViews)).Returns("SerializationResult");
 			_shortcutViewHandlerMock.Setup(h => h.FrameUpdate()).Returns(true);
 
 			var target = CreateTarget();
 
 			target.FrameUpdate();
+
+			_shortcutViewHandlerMock.Verify(h => h.FrameUpdate(), Times.Once, "Method was not called");
 
 			var jsonString = JsonConvert.SerializeObject(target);
 			var json = (JObject)JsonConvert.DeserializeObject(jsonString);

@@ -23,9 +23,19 @@
 		public static Func<ISerializer> CreateSerializerFunc { get; set; }
 
 		/// <summary>
+		/// Gets or sets a function to create a <see cref="IInputWrapper"/>.
+		/// </summary>
+		public static Func<IInputWrapper> CreateInputWrapperFunc { get; set; }
+
+		/// <summary>
+		/// Gets or sets a function to create a <see cref="ICameraWrapper"/>.
+		/// </summary>
+		public static Func<ICameraWrapper> CreateCameraWrapperFunc { get; set; }
+
+		/// <summary>
 		/// Gets or sets a function to create a <see cref="IShortcutViewHandler"/>.
 		/// </summary>
-		public static Func<IShortcutViewHandler> CreateShortcutViewHandlerFunc { get; set; }
+		public static Func<IInputWrapper, ICameraWrapper, IShortcutViewHandler> CreateShortcutViewHandlerFunc { get; set; }
 
 		/// <summary>
 		/// Resets the functions to the default (production) functions.
@@ -33,7 +43,9 @@
 		public static void ResetFactoryFunctions()
 		{
 			CreateSerializerFunc = () => new CameraModSerializer(new ISLogger<CameraModSerializer>());
-			CreateShortcutViewHandlerFunc = () => new ShortcutViewHandler(new UnityInputWrapper(), new ISCameraWrapper(), new ISLogger<ShortcutViewHandler>());
+			CreateInputWrapperFunc = () => new UnityInputWrapper();
+			CreateCameraWrapperFunc = () => new ISCameraWrapper();
+			CreateShortcutViewHandlerFunc = (inputWrapper, cameraWrapper) => new ShortcutViewHandler(inputWrapper, cameraWrapper, new ISLogger<ShortcutViewHandler>());
 		}
 	}
 }

@@ -11,7 +11,6 @@
 	public class ShortcutViewHandlerTest
 	{
 		private Mock<IInputWrapper> _inputWrapperMock;
-
 		private Mock<ICameraWrapper> _cameraWrapperMock;
 
 		[TestInitialize]
@@ -82,7 +81,7 @@
 			_inputWrapperMock.Setup(w => w.IsSaveModifierKeyPressed()).Returns(false);
 
 			_cameraWrapperMock.Setup(w => w.IsPlayerCameraActive()).Returns(true);
-			_cameraWrapperMock.Setup(w => w.SetPlayerCameraPosition(It.IsAny<CameraPosition>()));
+			_cameraWrapperMock.Setup(w => w.MovePlayerCameraToPosition(It.IsAny<CameraPosition>()));
 
 			var target = CreateTarget();
 
@@ -90,8 +89,8 @@
 
 			var result = target.FrameUpdate();
 
-			_cameraWrapperMock.Verify(w => w.SetPlayerCameraPosition(new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 }), Times.Once);
-			_cameraWrapperMock.Verify(w => w.SetPlayerCameraPosition(It.IsAny<CameraPosition>()), Times.Once, "Only one camera position must be set");
+			_cameraWrapperMock.Verify(w => w.MovePlayerCameraToPosition(new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 }), Times.Once);
+			_cameraWrapperMock.Verify(w => w.MovePlayerCameraToPosition(It.IsAny<CameraPosition>()), Times.Once, "Only one camera position must be set");
 
 			Assert.IsFalse(result);
 		}
