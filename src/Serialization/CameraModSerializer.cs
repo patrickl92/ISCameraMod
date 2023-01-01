@@ -7,7 +7,7 @@
 	using Newtonsoft.Json;
 	using UnityEngine;
 
-	public class CameraModSerializer
+	public class CameraModSerializer : ISerializer
 	{
 		private readonly ILogger<CameraModSerializer> _logger;
 

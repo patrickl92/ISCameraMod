@@ -12,7 +12,7 @@
 		private readonly ShortcutViewHandler _shortcutViewHandler;
 
 		[JsonIgnore] // Do not serialize this field
-		private readonly CameraModSerializer _serializer;
+		private readonly ISerializer _serializer;
 
 		/**
 		 * This field is used for persisting the camera positions to the current game, so they will be available when the game is loaded again.
