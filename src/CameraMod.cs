@@ -31,7 +31,7 @@
 		public CameraMod()
 		{
 			_serializer = new CameraModSerializer(new ISLogger<CameraModSerializer>());
-			_shortcutViewHandler = new ShortcutViewHandler(new UnityInputWrapper(), new ISLogger<ShortcutViewHandler>());
+			_shortcutViewHandler = new ShortcutViewHandler(new UnityInputWrapper(), new ISCameraWrapper(), new ISLogger<ShortcutViewHandler>());
 		}
 
 		public override void Load()

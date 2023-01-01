@@ -8,11 +8,14 @@
 	{
 		private readonly IInputWrapper _inputWrapper;
 
+		private readonly ICameraWrapper _cameraWrapper;
+
 		private readonly ILogger<ShortcutViewHandler> _logger;
 
-		public ShortcutViewHandler(IInputWrapper inputWrapper, ILogger<ShortcutViewHandler> logger)
+		public ShortcutViewHandler(IInputWrapper inputWrapper, ICameraWrapper cameraWrapper, ILogger<ShortcutViewHandler> logger)
 		{
 			_inputWrapper = inputWrapper ?? throw new ArgumentNullException(nameof(inputWrapper));
+			_cameraWrapper = cameraWrapper ?? throw new ArgumentNullException(nameof(cameraWrapper));
 			_logger = logger;
 
 			ShortcutViews = new Dictionary<int, CameraPosition>();
@@ -49,17 +52,7 @@
 				ShortcutViews.Remove(numpadKey);
 			}
 
-			// Create a serializable instance of the InfraSpace CameraMovement and then save the position data from this instance
-			var serializableCameraMovement = new CameraMovement.Serializable(WorldScripts.Inst.cameraMovement);
-			var cameraPosition = new CameraPosition
-			{
-				Position = serializableCameraMovement.position,
-				RotationX = serializableCameraMovement.rotX,
-				RotationY = serializableCameraMovement.rotY,
-				ZoomLevel = serializableCameraMovement.zoomLevel
-			};
-
-			ShortcutViews.Add(numpadKey, cameraPosition);
+			ShortcutViews.Add(numpadKey, _cameraWrapper.GetCurrentPlayerCameraPosition());
 
 			return true;
 		}
@@ -74,16 +67,7 @@
 
 			Log($"Applying saved camera position for numpad key '{numpadKey}'");
 
-			// Create a serializable instance of the InfraSpace CameraMovement and then use this instance to apply the position
-			var serializableCameraMovement = new CameraMovement.Serializable
-			{
-				position = ShortcutViews[numpadKey].Position,
-				rotX = ShortcutViews[numpadKey].RotationX,
-				rotY = ShortcutViews[numpadKey].RotationY,
-				zoomLevel = ShortcutViews[numpadKey].ZoomLevel
-			};
-
-			WorldScripts.Inst.cameraMovement.InitFromSerializable(serializableCameraMovement);
+			_cameraWrapper.SetCurrentPlayerCameraPosition(ShortcutViews[numpadKey]);
 		}
 
 		private void Log(string message)

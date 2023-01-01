@@ -58,6 +58,8 @@
     <Compile Include="Serialization\SerializableVersionInfo.cs" />
     <Compile Include="Serialization\V1\SerializableCameraPositionV1.cs" />
     <Compile Include="Serialization\V1\SerializableCameraPositionsV1.cs" />
+    <Compile Include="Wrapper\ICameraWrapper.cs" />
+    <Compile Include="Wrapper\ISCameraWrapper.cs" />
     <Compile Include="Wrapper\UnityInputWrapper.cs" />
     <Compile Include="Wrapper\IInputWrapper.cs" />
     <Compile Include="Wrapper\ILogger.cs" />
