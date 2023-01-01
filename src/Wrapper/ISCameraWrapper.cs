@@ -31,5 +31,11 @@
 
 			WorldScripts.Inst.cameraMovement.InitFromSerializable(serializableCameraMovement);
 		}
+
+		public bool IsPlayerCameraActive()
+		{
+			// TODO: Implement
+			return true;
+		}
 	}
 }

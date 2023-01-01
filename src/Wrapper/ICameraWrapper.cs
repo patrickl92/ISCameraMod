@@ -7,5 +7,7 @@
 		CameraPosition GetCurrentPlayerCameraPosition();
 
 		void SetCurrentPlayerCameraPosition(CameraPosition cameraPosition);
+
+		bool IsPlayerCameraActive();
 	}
 }

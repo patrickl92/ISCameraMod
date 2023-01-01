@@ -29,7 +29,7 @@
 			var shortcutViewsChanged = false;
 
 			var numpadKey = _inputWrapper.GetPressedNumpadKey();
-			if (numpadKey.HasValue)
+			if (numpadKey.HasValue && _cameraWrapper.IsPlayerCameraActive())
 			{
 				if (_inputWrapper.IsSaveModifierKeyPressed())
 				{
