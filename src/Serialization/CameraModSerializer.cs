@@ -7,15 +7,27 @@
 	using Newtonsoft.Json;
 	using UnityEngine;
 
+	/// <summary>
+	/// The default serializer, which uses JSON for serializing and deserializing the camera positions.
+	/// </summary>
 	public class CameraModSerializer : ISerializer
 	{
 		private readonly ILogger<CameraModSerializer> _logger;
 
+		/// <summary>
+		/// Creates a new instance of the <see cref="CameraModSerializer"/> class.
+		/// </summary>
+		/// <param name="logger">The logger to use. Can be null.</param>
 		public CameraModSerializer(ILogger<CameraModSerializer> logger)
 		{
 			_logger = logger;
 		}
 
+		/// <summary>
+		/// Serializes the camera positions into a JSON string.
+		/// </summary>
+		/// <param name="cameraPositions">The camera positions to serialize.</param>
+		/// <returns>A JSON string containing the camera positions.</returns>
 		public string Serialize(IReadOnlyDictionary<int, CameraPosition> cameraPositions)
 		{
 			if (cameraPositions == null)
@@ -35,6 +47,11 @@
 			return JsonConvert.SerializeObject(serializableCameraPositions, Formatting.None);
 		}
 
+		/// <summary>
+		/// Deserializes the camera positions from a JSON string.
+		/// </summary>
+		/// <param name="data">The JSON string containing the camera positions.</param>
+		/// <returns>The deserialized camera positions, or an empty dictionary, if the deserialization fails for any reason.</returns>
 		public IReadOnlyDictionary<int, CameraPosition> Deserialize(string data)
 		{
 			if (data != null)

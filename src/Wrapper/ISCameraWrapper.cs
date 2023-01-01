@@ -2,8 +2,15 @@
 {
 	using ISCameraMod.Model;
 
+	/// <summary>
+	/// Wrapper for the InfraSpace camera.
+	/// </summary>
 	internal class ISCameraWrapper : ICameraWrapper
 	{
+		/// <summary>
+		/// Gets the current camera position of the player in the world.
+		/// </summary>
+		/// <returns>The current camera position.</returns>
 		public CameraPosition GetPlayerCameraPosition()
 		{
 			// Create a serializable instance of the InfraSpace CameraMovement and then save the position data from this instance
@@ -18,6 +25,10 @@
 			};
 		}
 
+		/// <summary>
+		/// Sets the current camera position of the player in the world.
+		/// </summary>
+		/// <param name="cameraPosition">The camera position to set.</param>
 		public void SetPlayerCameraPosition(CameraPosition cameraPosition)
 		{
 			// Create a serializable instance of the InfraSpace CameraMovement and then use this instance to apply the position
@@ -32,6 +43,11 @@
 			WorldScripts.Inst.cameraMovement.InitFromSerializable(serializableCameraMovement);
 		}
 
+		/// <summary>
+		/// Get a value indicating whether the player camera is currently active.
+		/// An active camera means that the player is able to move the camera in the world, and is not e.g. in the loading screen or main menu.
+		/// </summary>
+		/// <returns>True if the player can move the camera, otherwise false.</returns>
 		public bool IsPlayerCameraActive()
 		{
 			// TODO: Implement

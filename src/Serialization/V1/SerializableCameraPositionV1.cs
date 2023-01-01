@@ -3,14 +3,25 @@
 	using System;
 	using ISCameraMod.Model;
 
+	/// <summary>
+	/// Represents a serialized a <see cref="CameraPosition"/> with its associated numpad key.
+	/// </summary>
 	[Serializable]
 	public class SerializableCameraPositionV1
 	{
+		/// <summary>
+		/// Creates a new instance of the <see cref="SerializableCameraPositionV1"/> class. This constructor is required for deserialization.
+		/// </summary>
 		public SerializableCameraPositionV1()
 		{
 			// Used for deserialization
 		}
 
+		/// <summary>
+		/// Creates a new instance of the <see cref="SerializableCameraPositionV1"/> class.
+		/// </summary>
+		/// <param name="numpadKey">The associated numpad key.</param>
+		/// <param name="cameraPosition">The camera position to serialize.</param>
 		public SerializableCameraPositionV1(int numpadKey, CameraPosition cameraPosition)
 		{
 			NumpadKey = numpadKey;
@@ -22,18 +33,39 @@
 			ZoomLevel = cameraPosition.ZoomLevel;
 		}
 
+		/// <summary>
+		/// Gets or sets the associated numpad key.
+		/// </summary>
 		public int NumpadKey { get; set; }
 
+		/// <summary>
+		/// Gets or sets the position of the camera on the X axis.
+		/// </summary>
 		public float PositionX { get; set; }
 
+		/// <summary>
+		/// Gets or sets the position of the camera on the Y axis.
+		/// </summary>
 		public float PositionY { get; set; }
 
+		/// <summary>
+		/// Gets or sets the position of the camera on the Z axis.
+		/// </summary>
 		public float PositionZ { get; set; }
 
+		/// <summary>
+		/// Gets or sets the rotation of the camera on the X axis.
+		/// </summary>
 		public float RotationX { get; set; }
 
+		/// <summary>
+		/// Gets or sets the rotation of the camera on the Y axis.
+		/// </summary>
 		public float RotationY { get; set; }
 
+		/// <summary>
+		/// Gets or sets the zoom level of the camera.
+		/// </summary>
 		public float ZoomLevel { get; set; }
 	}
 }

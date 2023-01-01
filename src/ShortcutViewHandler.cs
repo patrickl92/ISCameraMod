@@ -5,6 +5,9 @@
 	using ISCameraMod.Model;
 	using ISCameraMod.Wrapper;
 
+	/// <summary>
+	/// This class contains the business logic to save and apply camera positions.
+	/// </summary>
 	public class ShortcutViewHandler : IShortcutViewHandler
 	{
 		private readonly IInputWrapper _inputWrapper;
@@ -13,6 +16,12 @@
 
 		private readonly ILogger<ShortcutViewHandler> _logger;
 
+		/// <summary>
+		/// Creates a new instance of the <see cref="ShortcutViewHandler"/> class.
+		/// </summary>
+		/// <param name="inputWrapper">The input wrapper to use.</param>
+		/// <param name="cameraWrapper">The camera wrapper to use.</param>
+		/// <param name="logger">The logger to use. Can be null.</param>
 		public ShortcutViewHandler(IInputWrapper inputWrapper, ICameraWrapper cameraWrapper, ILogger<ShortcutViewHandler> logger)
 		{
 			_inputWrapper = inputWrapper ?? throw new ArgumentNullException(nameof(inputWrapper));
@@ -22,8 +31,16 @@
 			ShortcutViews = new Dictionary<int, CameraPosition>();
 		}
 
+		/// <summary>
+		/// Gets the current shortcut views.
+		/// The key of the dictionary is the associated numpad key of the camera position.
+		/// </summary>
 		public Dictionary<int, CameraPosition> ShortcutViews { get; }
 
+		/// <summary>
+		/// Gets called every frame to perform the business logic.
+		///  </summary>
+		/// <returns>True if the shortcut views have been changed during that frame, otherwise false.</returns>
 		public bool FrameUpdate()
 		{
 			var shortcutViewsChanged = false;
