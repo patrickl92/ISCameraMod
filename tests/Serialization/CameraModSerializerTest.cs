@@ -1,5 +1,7 @@
 ﻿namespace ISCameraModTest.Serialization
 {
+	using System.Collections.Generic;
+	using ISCameraMod.Model;
 	using ISCameraMod.Serialization;
 	using Microsoft.VisualStudio.TestTools.UnitTesting;
 	using UnityEngine;
@@ -7,6 +9,35 @@
 	[TestClass]
 	public class CameraModSerializerTest
 	{
+		[TestMethod]
+		public void Serialize_NullInputData_ReturnsNull()
+		{
+			var target = CreateTarget();
+			var result = target.Serialize(null);
+
+			Assert.IsNull(result);
+		}
+
+		[TestMethod]
+		public void Serialize_RoundtripTest_DataIsDeserializedCorrectly()
+		{
+			var cameraPositions = new Dictionary<int, CameraPosition>
+			{
+				{0, new CameraPosition {Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6}},
+				{5, new CameraPosition {Position = new Vector3(6, 5, 4), RotationX = 3, RotationY = 2, ZoomLevel = 1}}
+			};
+
+			var target = CreateTarget();
+			var data = target.Serialize(cameraPositions);
+			var result = target.Deserialize(data);
+
+			Assert.AreEqual(2, result.Count, "Wrong count of camera positions");
+			Assert.IsTrue(result.ContainsKey(0), "Camera position with key 0 was not deserialized");
+			Assert.IsTrue(result.ContainsKey(5), "Camera position with key 5 was not deserialized");
+			Assert.AreEqual(new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 }, result[0], "Camera position with key 0 was not deserialized correctly");
+			Assert.AreEqual(new CameraPosition { Position = new Vector3(6, 5, 4), RotationX = 3, RotationY = 2, ZoomLevel = 1 }, result[5], "Camera position with key 5 was not deserialized correctly");
+		}
+
 		[TestMethod]
 		public void Deserialize_NullInputData_ReturnsEmptyDictionary()
 		{
