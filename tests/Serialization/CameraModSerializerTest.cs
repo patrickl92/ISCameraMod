@@ -8,7 +8,7 @@
 	public class CameraModSerializerTest
 	{
 		[TestMethod]
-		public void NullInputData_ReturnsEmptyDictionary()
+		public void Deserialize_NullInputData_ReturnsEmptyDictionary()
 		{
 			var target = CreateTarget();
 			var result = target.Deserialize(null);
@@ -18,7 +18,7 @@
 		}
 
 		[TestMethod]
-		public void InvalidInputData_ReturnsEmptyDictionary()
+		public void Deserialize_InvalidInputData_ReturnsEmptyDictionary()
 		{
 			var target = CreateTarget();
 			var result = target.Deserialize("Not a JSON structure");
@@ -28,7 +28,7 @@
 		}
 
 		[TestMethod]
-		public void V0_UnsupportedVersion_ReturnsEmptyDictionary()
+		public void Deserialize_V0_UnsupportedVersion_ReturnsEmptyDictionary()
 		{
 			var data = @"{""Version"":0}";
 
@@ -40,7 +40,7 @@
 		}
 
 		[TestMethod]
-		public void V1_NoSavedCameraPositions_ReturnsEmptyDictionary()
+		public void Deserialize_V1_NoSavedCameraPositions_ReturnsEmptyDictionary()
 		{
 			var data = @"{""CameraPositions"":[],""Version"":1}";
 
@@ -52,7 +52,7 @@
 		}
 
 		[TestMethod]
-		public void V1_MultipleSavedCameraPositions_ReturnsLoadedCameraPositions()
+		public void Deserialize_V1_MultipleSavedCameraPositions_ReturnsLoadedCameraPositions()
 		{
 			var data = @"{""CameraPositions"":[{""NumpadKey"":0,""PositionX"":1797.94482,""PositionY"":60.0,""PositionZ"":1741.16931,""RotationX"":-5.6245923,""RotationY"":842.4311,""ZoomLevel"":2.57508087},{""NumpadKey"":1,""PositionX"":1535.61731,""PositionY"":60.0,""PositionZ"":1982.5896,""RotationX"":35.210907,""RotationY"":819.3053,""ZoomLevel"":2.241456},{""NumpadKey"":5,""PositionX"":1568.50171,""PositionY"":63.0,""PositionZ"":1968.88916,""RotationX"":-20.0030479,""RotationY"":959.7377,""ZoomLevel"":1.94266248}],""Version"":1}";
 
@@ -81,7 +81,7 @@
 		}
 
 		[TestMethod]
-		public void V1_DuplicatedSavedCameraPositions_ReturnsLoadedCameraPositions()
+		public void Deserialize_V1_DuplicatedSavedCameraPositions_ReturnsLoadedCameraPositions()
 		{
 			var data = @"{""CameraPositions"":[{""NumpadKey"":0,""PositionX"":1797.94482,""PositionY"":60.0,""PositionZ"":1741.16931,""RotationX"":-5.6245923,""RotationY"":842.4311,""ZoomLevel"":2.57508087},{""NumpadKey"":1,""PositionX"":1535.61731,""PositionY"":60.0,""PositionZ"":1982.5896,""RotationX"":35.210907,""RotationY"":819.3053,""ZoomLevel"":2.241456},{""NumpadKey"":1,""PositionX"":1568.50171,""PositionY"":63.0,""PositionZ"":1968.88916,""RotationX"":-20.0030479,""RotationY"":959.7377,""ZoomLevel"":1.94266248}],""Version"":1}";
 
@@ -104,7 +104,7 @@
 		}
 
 		[TestMethod]
-		public void V2_UnsupportedVersion_ReturnsEmptyDictionary()
+		public void Deserialize_V2_UnsupportedVersion_ReturnsEmptyDictionary()
 		{
 			var data = @"{""Version"":2}";
 
