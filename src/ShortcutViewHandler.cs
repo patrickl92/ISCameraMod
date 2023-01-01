@@ -1,8 +1,6 @@
 ﻿namespace ISCameraMod
 {
-	using System;
 	using System.Collections.Generic;
-	using ISCameraMod.Serialization;
 	using ISCameraMod.Wrapper;
 
 	public class ShortcutViewHandler
@@ -20,12 +18,14 @@
 
 		public bool FrameUpdate()
 		{
+			var shortcutViewsChanged = false;
+
 			var numpadKey = UnityInputWrapper.GetPressedNumpadKey();
 			if (numpadKey.HasValue)
 			{
 				if (UnityInputWrapper.IsSaveModifierKeyPressed())
 				{
-					SavePosition(numpadKey.Value);
+					shortcutViewsChanged = SavePosition(numpadKey.Value);
 				}
 				else
 				{
@@ -33,10 +33,10 @@
 				}
 			}
 
-			return false;
+			return shortcutViewsChanged;
 		}
 
-		private void SavePosition(int numpadKey)
+		private bool SavePosition(int numpadKey)
 		{
 			Log($"Saving current camera position for numpad key '{numpadKey}'");
 
@@ -56,6 +56,8 @@
 			};
 
 			ShortcutViews.Add(numpadKey, cameraPosition);
+
+			return true;
 		}
 
 		private void ApplyPosition(int numpadKey)
