@@ -69,7 +69,19 @@
 		/// <returns>True if the player can move the camera, otherwise false.</returns>
 		public bool IsPlayerCameraActive()
 		{
-			// TODO: Implement
+			if (!WorldScripts.Inst.saveManager.HasFinishedLoading())
+			{
+				// Game is still loading
+				return false;
+			}
+
+			if (GameScripts.Inst.modalManager.IsGameModal())
+			{
+				// A modal overlay (e.g. the main menu or research panel) is open
+				return false;
+			}
+
+			// TODO: Check if the spaceship view is active
 			return true;
 		}
 
