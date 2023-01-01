@@ -2,7 +2,7 @@
 {
 	using UnityEngine;
 
-	public class ISLogger<T> : ILogger<T>
+	internal class ISLogger<T> : ILogger<T>
 	{
 		private readonly string _context;
 
