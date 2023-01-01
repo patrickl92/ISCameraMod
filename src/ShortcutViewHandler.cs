@@ -1,43 +1,22 @@
 ﻿namespace ISCameraMod
 {
 	using System;
+	using System.Collections.Generic;
 	using ISCameraMod.Serialization;
 	using ISCameraMod.Wrapper;
 
 	public class ShortcutViewHandler
 	{
-		private readonly CameraPosition[] _savedPositions;
-
-		private readonly CameraModSerializer _serializer;
-
 		private readonly ILogger<ShortcutViewHandler> _logger;
 
-		public ShortcutViewHandler(ILogger<ShortcutViewHandler> logger, CameraModSerializer serializer)
+		public ShortcutViewHandler(ILogger<ShortcutViewHandler> logger)
 		{
 			_logger = logger;
-			_serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
 
-			_savedPositions = new CameraPosition[10];
-
-			for (int i = 0; i < _savedPositions.Length; i++)
-			{
-				// Mark all positions as not valid initially
-				// If a position is not valid, it does not get applied
-				_savedPositions[i].IsValid = false;
-			}
+			ShortcutViews = new Dictionary<int, CameraPosition>();
 		}
 
-		public void Load(string data)
-		{
-			Log("Deserializing positions");
-			_serializer.Deserialize(data, _savedPositions);
-		}
-
-		public string Save()
-		{
-			Log("Serializing positions");
-			return _serializer.Serialize(_savedPositions);
-		}
+		public Dictionary<int, CameraPosition> ShortcutViews { get; }
 
 		public bool FrameUpdate()
 		{
@@ -61,23 +40,29 @@
 		{
 			Log($"Saving current camera position for numpad key '{numpadKey}'");
 
+			if (ShortcutViews.ContainsKey(numpadKey))
+			{
+				ShortcutViews.Remove(numpadKey);
+			}
+
 			// Create a serializable instance of the InfraSpace CameraMovement and then save the position data from this instance
 			var serializableCameraMovement = new CameraMovement.Serializable(WorldScripts.Inst.cameraMovement);
+			var cameraPosition = new CameraPosition
+			{
+				Position = serializableCameraMovement.position,
+				RotationX = serializableCameraMovement.rotX,
+				RotationY = serializableCameraMovement.rotY,
+				ZoomLevel = serializableCameraMovement.zoomLevel
+			};
 
-			_savedPositions[numpadKey].Position = serializableCameraMovement.position;
-			_savedPositions[numpadKey].RotationX = serializableCameraMovement.rotX;
-			_savedPositions[numpadKey].RotationY = serializableCameraMovement.rotY;
-			_savedPositions[numpadKey].ZoomLevel = serializableCameraMovement.zoomLevel;
-
-			// Position data has been set, so allow it to be applied by marking it as valid
-			_savedPositions[numpadKey].IsValid = true;
+			ShortcutViews.Add(numpadKey, cameraPosition);
 		}
 
 		private void ApplyPosition(int numpadKey)
 		{
-			if (!_savedPositions[numpadKey].IsValid)
+			if (!ShortcutViews.ContainsKey(numpadKey))
 			{
-				Log($"Camera position for numpad key '{numpadKey}' is not valid");
+				Log($"No camera position for numpad key '{numpadKey}'");
 				return;
 			}
 
@@ -86,10 +71,10 @@
 			// Create a serializable instance of the InfraSpace CameraMovement and then use this instance to apply the position
 			var serializableCameraMovement = new CameraMovement.Serializable
 			{
-				position = _savedPositions[numpadKey].Position,
-				rotX = _savedPositions[numpadKey].RotationX,
-				rotY = _savedPositions[numpadKey].RotationY,
-				zoomLevel = _savedPositions[numpadKey].ZoomLevel
+				position = ShortcutViews[numpadKey].Position,
+				rotX = ShortcutViews[numpadKey].RotationX,
+				rotY = ShortcutViews[numpadKey].RotationY,
+				zoomLevel = ShortcutViews[numpadKey].ZoomLevel
 			};
 
 			WorldScripts.Inst.cameraMovement.InitFromSerializable(serializableCameraMovement);

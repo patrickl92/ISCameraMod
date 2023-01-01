@@ -11,6 +11,9 @@
 		[JsonIgnore] // Do not serialize this field
 		private readonly ShortcutViewHandler _shortcutViewHandler;
 
+		[JsonIgnore] // Do not serialize this field
+		private readonly CameraModSerializer _serializer;
+
 		/**
 		 * This field is used for persisting the camera positions to the current game, so they will be available when the game is loaded again.
 		 * The way InfraSpace is persisting mod data is by just serializing this class directly into the game file.
@@ -27,12 +30,20 @@
 		
 		public CameraMod()
 		{
-			_shortcutViewHandler = new ShortcutViewHandler(new ISLogger<ShortcutViewHandler>(), new CameraModSerializer(new ISLogger<CameraModSerializer>()));
+			_serializer = new CameraModSerializer(new ISLogger<CameraModSerializer>());
+			_shortcutViewHandler = new ShortcutViewHandler(new ISLogger<ShortcutViewHandler>());
 		}
 
 		public override void Load()
 		{
-			_shortcutViewHandler.Load(_serializedData);
+			var loadedViews = _serializer.Deserialize(_serializedData);
+
+			_shortcutViewHandler.ShortcutViews.Clear();
+
+			foreach (var entry in loadedViews)
+			{
+				_shortcutViewHandler.ShortcutViews.Add(entry.Key, entry.Value);
+			}
 		}
 
 		public override void Start()
@@ -43,7 +54,7 @@
 		{
 			if (_shortcutViewHandler.FrameUpdate())
 			{
-				_serializedData = _shortcutViewHandler.Save();
+				_serializedData = _serializer.Serialize(_shortcutViewHandler.ShortcutViews);
 			}
 		}
 
