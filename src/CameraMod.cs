@@ -2,14 +2,14 @@
 {
 	using System;
 	using ISCameraMod.Serialization;
+	using ISCameraMod.Wrapper;
 	using Newtonsoft.Json;
-	using UnityEngine;
 
 	[Serializable]
 	public class CameraMod : Mod
 	{
-		[JsonIgnore] // Do not directly serialize the saved positions
-		private readonly CameraPosition[] _savedPositions;
+		[JsonIgnore] // Do not serialize this field
+		private readonly ShortcutViewHandler _shortcutViewHandler;
 
 		/**
 		 * This field is used for persisting the camera positions to the current game, so they will be available when the game is loaded again.
@@ -27,20 +27,12 @@
 		
 		public CameraMod()
 		{
-			_savedPositions = new CameraPosition[10];
-
-			for (int i = 0; i < _savedPositions.Length; i++)
-			{
-				// Mark all positions as not valid initially
-				// If a position is not valid, it does not get applied
-				_savedPositions[i].IsValid = false;
-			}
+			_shortcutViewHandler = new ShortcutViewHandler(new ISLogger<ShortcutViewHandler>(), new CameraModSerializer(new ISLogger<CameraModSerializer>()));
 		}
 
 		public override void Load()
 		{
-			Log("Deserializing positions");
-			CameraModSerializer.Deserialize(_serializedData, _savedPositions);
+			_shortcutViewHandler.Load(_serializedData);
 		}
 
 		public override void Start()
@@ -49,67 +41,14 @@
 
 		public override void FrameUpdate()
 		{
-			var numpadKey = UnityInputWrapper.GetPressedNumpadKey();
-			if (numpadKey.HasValue)
+			if (_shortcutViewHandler.FrameUpdate())
 			{
-				if (UnityInputWrapper.IsSaveModifierKeyPressed())
-				{
-					SavePosition(numpadKey.Value);
-				}
-				else
-				{
-					ApplyPosition(numpadKey.Value);
-				}
+				_serializedData = _shortcutViewHandler.Save();
 			}
 		}
 
 		public override void SimulationUdpate()
 		{
-		}
-
-		private void SavePosition(int numpadKey)
-		{
-			Log($"Saving current camera position for numpad key '{numpadKey}'");
-
-			// Create a serializable instance of the InfraSpace CameraMovement and then save the position data from this instance
-			var serializableCameraMovement = new CameraMovement.Serializable(WorldScripts.Inst.cameraMovement);
-
-			_savedPositions[numpadKey].Position = serializableCameraMovement.position;
-			_savedPositions[numpadKey].RotationX = serializableCameraMovement.rotX;
-			_savedPositions[numpadKey].RotationY = serializableCameraMovement.rotY;
-			_savedPositions[numpadKey].ZoomLevel = serializableCameraMovement.zoomLevel;
-
-			// Position data has been set, so allow it to be applied by marking it as valid
-			_savedPositions[numpadKey].IsValid = true;
-
-			_serializedData = CameraModSerializer.Serialize(_savedPositions);
-		}
-
-		private void ApplyPosition(int numpadKey)
-		{
-			if (!_savedPositions[numpadKey].IsValid)
-			{
-				Log($"Camera position for numpad key '{numpadKey}' is not valid");
-				return;
-			}
-
-			Log($"Applying saved camera position for numpad key '{numpadKey}'");
-
-			// Create a serializable instance of the InfraSpace CameraMovement and then use this instance to apply the position
-			var serializableCameraMovement = new CameraMovement.Serializable
-			{
-				position = _savedPositions[numpadKey].Position,
-				rotX = _savedPositions[numpadKey].RotationX,
-				rotY = _savedPositions[numpadKey].RotationY,
-				zoomLevel = _savedPositions[numpadKey].ZoomLevel
-			};
-
-			WorldScripts.Inst.cameraMovement.InitFromSerializable(serializableCameraMovement);
-		}
-
-		private void Log(string message)
-		{
-			MonoBehaviour.print($"{GetType().Name}: {message}");
 		}
 	}
 }

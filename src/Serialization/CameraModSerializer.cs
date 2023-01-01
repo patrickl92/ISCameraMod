@@ -1,12 +1,20 @@
 ﻿namespace ISCameraMod.Serialization
 {
 	using ISCameraMod.Serialization.V1;
+	using ISCameraMod.Wrapper;
 	using Newtonsoft.Json;
 	using UnityEngine;
 
-	public static class CameraModSerializer
+	public class CameraModSerializer
 	{
-		public static string Serialize(CameraPosition[] cameraPositions)
+		private readonly ILogger<CameraModSerializer> _logger;
+
+		public CameraModSerializer(ILogger<CameraModSerializer> logger)
+		{
+			_logger = logger;
+		}
+
+		public string Serialize(CameraPosition[] cameraPositions)
 		{
 			if (cameraPositions == null)
 			{
@@ -28,7 +36,7 @@
 			return JsonConvert.SerializeObject(serializableCameraPositions, Formatting.None);
 		}
 
-		public static void Deserialize(string data, CameraPosition[] targetArray)
+		public void Deserialize(string data, CameraPosition[] targetArray)
 		{
 			if (data == null || targetArray == null)
 			{
@@ -66,7 +74,7 @@
 			}
 		}
 
-		private static void DeserializeV1(string data, CameraPosition[] targetArray)
+		private void DeserializeV1(string data, CameraPosition[] targetArray)
 		{
 			var serializableCameraPositions = JsonConvert.DeserializeObject<SerializableCameraPositionsV1>(data);
 			if (serializableCameraPositions == null)
@@ -84,7 +92,7 @@
 
 				Log($"Loading camera position for numpad key '{serializablePosition.NumpadKey}'");
 
-				targetArray[serializablePosition.NumpadKey].Position = serializablePosition.Position;
+				targetArray[serializablePosition.NumpadKey].Position = new Vector3(serializablePosition.PositionX, serializablePosition.PositionY, serializablePosition.PositionZ);
 				targetArray[serializablePosition.NumpadKey].RotationX = serializablePosition.RotationX;
 				targetArray[serializablePosition.NumpadKey].RotationY = serializablePosition.RotationY;
 				targetArray[serializablePosition.NumpadKey].ZoomLevel = serializablePosition.ZoomLevel;
@@ -94,9 +102,9 @@
 			}
 		}
 
-		private static void Log(string message)
+		private void Log(string message)
 		{
-			MonoBehaviour.print($"{typeof(CameraModSerializer).Name}: {message}");
+			_logger?.Log(message);
 		}
 	}
 }

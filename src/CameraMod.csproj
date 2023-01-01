@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CameraMod.cs" />
+    <Compile Include="ShortcutViewHandler.cs" />
     <Compile Include="CameraPosition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\CameraModSerializer.cs" />
@@ -58,6 +59,8 @@
     <Compile Include="Serialization\V1\SerializableCameraPositionV1.cs" />
     <Compile Include="Serialization\V1\SerializableCameraPositionsV1.cs" />
     <Compile Include="UnityInputWrapper.cs" />
+    <Compile Include="Wrapper\ILogger.cs" />
+    <Compile Include="Wrapper\ISLogger.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

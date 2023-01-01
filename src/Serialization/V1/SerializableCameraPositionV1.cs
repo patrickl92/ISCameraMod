@@ -14,7 +14,9 @@
 		public SerializableCameraPositionV1(int numpadKey, CameraPosition cameraPosition)
 		{
 			NumpadKey = numpadKey;
-			Position = cameraPosition.Position;
+			PositionX = cameraPosition.Position.x;
+			PositionY = cameraPosition.Position.y;
+			PositionZ = cameraPosition.Position.z;
 			RotationX = cameraPosition.RotationX;
 			RotationY = cameraPosition.RotationY;
 			ZoomLevel = cameraPosition.ZoomLevel;
@@ -22,7 +24,11 @@
 
 		public int NumpadKey { get; set; }
 
-		public Vector3 Position { get; set; }
+		public float PositionX { get; set; }
+
+		public float PositionY { get; set; }
+
+		public float PositionZ { get; set; }
 
 		public float RotationX { get; set; }
 
