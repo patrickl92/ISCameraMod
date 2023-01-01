@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CameraMod.cs" />
+    <Compile Include="IShortcutViewHandler.cs" />
     <Compile Include="Serialization\ISerializer.cs" />
     <Compile Include="ShortcutViewHandler.cs" />
     <Compile Include="Model\CameraPosition.cs" />

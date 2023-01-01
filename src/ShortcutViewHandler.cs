@@ -5,7 +5,7 @@
 	using ISCameraMod.Model;
 	using ISCameraMod.Wrapper;
 
-	public class ShortcutViewHandler
+	public class ShortcutViewHandler : IShortcutViewHandler
 	{
 		private readonly IInputWrapper _inputWrapper;
 

@@ -9,7 +9,7 @@
 	public class CameraMod : Mod
 	{
 		[JsonIgnore] // Do not serialize this field
-		private readonly ShortcutViewHandler _shortcutViewHandler;
+		private readonly IShortcutViewHandler _shortcutViewHandler;
 
 		[JsonIgnore] // Do not serialize this field
 		private readonly ISerializer _serializer;
