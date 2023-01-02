@@ -1,5 +1,5 @@
 # InfraSpace CameraMod
-Mod for InfraSpace, which adds some additional capabilities to the in-game camera
+Mod for [InfraSpace](https://infraspace.dionicsoftware.com/), which adds some additional capabilities to the in-game camera
 
 ## Features
 ### Shortcut views
@@ -9,4 +9,6 @@ Mod for InfraSpace, which adds some additional capabilities to the in-game camer
 - You can use all numpad keys between 0 and 9
 
 ## How to download
-This mod is work in progress and has not been published yet.
+You need to subscribe to the mod in the Steam workshop. The mod is then automatically downloaded and installed.
+
+Link to the Steam workshop page: https://steamcommunity.com/sharedfiles/filedetails/?id=2911528550
