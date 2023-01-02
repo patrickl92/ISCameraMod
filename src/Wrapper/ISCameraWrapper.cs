@@ -17,13 +17,13 @@
 		/// </summary>
 		public ISCameraWrapper()
 		{
-			CameraMoveDuration = 0.5f;
+			CameraMoveDuration = TimeSpan.FromSeconds(0.5);
 		}
 
 		/// <summary>
 		/// Gets or sets the duration for moving the camera to its target position (in seconds).
 		/// </summary>
-		public float CameraMoveDuration { get; set; }
+		public TimeSpan CameraMoveDuration { get; set; }
 
 		/// <summary>
 		/// Updates the movement of the camera.
@@ -69,7 +69,15 @@
 		/// <param name="cameraPosition">The target camera position.</param>
 		public void MovePlayerCameraToPosition(CameraPosition cameraPosition)
 		{
-			_animatedCameraPosition = new AnimatedCameraPosition(GetPlayerCameraPosition(), cameraPosition, Time.time, Time.time + CameraMoveDuration);
+			if (CameraMoveDuration == TimeSpan.Zero)
+			{
+				// No animation, set the target position directly
+				SetCameraPosition(cameraPosition);
+			}
+			else
+			{
+				_animatedCameraPosition = new AnimatedCameraPosition(GetPlayerCameraPosition(), cameraPosition, Time.time, Time.time + (float)CameraMoveDuration.TotalSeconds);
+			}
 		}
 
 		/// <summary>

@@ -1,5 +1,6 @@
 ﻿namespace ISCameraMod.Model
 {
+	using System;
 	using System.Collections.Generic;
 
 	/// <summary>
@@ -16,9 +17,9 @@
 		}
 
 		/// <summary>
-		/// Gets or sets the duration for moving the camera to its target position (in seconds).
+		/// Gets or sets the duration for moving the camera to its target position.
 		/// </summary>
-		public float CameraMoveDuration { get; set; }
+		public TimeSpan CameraMoveDuration { get; set; }
 
 		/// <summary>
 		/// Gets a dictionary which contains the shortcut views.

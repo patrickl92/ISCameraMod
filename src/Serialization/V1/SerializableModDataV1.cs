@@ -28,7 +28,7 @@
 		{
 			modData = modData ?? throw new ArgumentNullException(nameof(modData));
 
-			CameraMoveDuration = modData.CameraMoveDuration;
+			CameraMoveDuration = (float)modData.CameraMoveDuration.TotalSeconds;
 
 			foreach (var entry in modData.CameraPositions)
 			{

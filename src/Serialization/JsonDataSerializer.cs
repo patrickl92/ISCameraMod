@@ -1,5 +1,6 @@
 ﻿namespace ISCameraMod.Serialization
 {
+	using System;
 	using ISCameraMod.Model;
 	using ISCameraMod.Serialization.V1;
 	using ISCameraMod.Wrapper;
@@ -91,7 +92,7 @@
 
 			var result = new ModData
 			{
-				CameraMoveDuration = serializableModData.CameraMoveDuration
+				CameraMoveDuration = serializableModData.CameraMoveDuration > 0 ? TimeSpan.FromSeconds(serializableModData.CameraMoveDuration) : TimeSpan.Zero
 			};
 
 			foreach (var serializablePosition in serializableModData.CameraPositions)

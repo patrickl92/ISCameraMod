@@ -1,5 +1,6 @@
 ﻿namespace ISCameraModTest
 {
+	using System;
 	using System.Collections.Generic;
 	using GraphAndChartSimpleJSON;
 	using ISCameraMod;
@@ -81,7 +82,7 @@
 		[TestMethod]
 		public void LoadAndStart_DeserializedInstanceWithData_InitializesCorrectly()
 		{
-			var modData = new ModData { CameraMoveDuration = 4.2f };
+			var modData = new ModData { CameraMoveDuration = TimeSpan.FromSeconds(4.2) };
 			modData.CameraPositions.Add(0, new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 });
 			modData.CameraPositions.Add(5, new CameraPosition { Position = new Vector3(6, 5, 4), RotationX = 3, RotationY = 2, ZoomLevel = 1 });
 
@@ -99,7 +100,7 @@
 			Assert.AreEqual(new CameraPosition { Position = new Vector3(6, 5, 4), RotationX = 3, RotationY = 2, ZoomLevel = 1 }, _shortcutViews[5], "Camera position with key 5 was not loaded correctly");
 
 			Assert.AreEqual(2, _shortcutViews.Count, "Wrong count of camera positions");
-			Assert.AreEqual(4.2f, _cameraWrapperMock.Object.CameraMoveDuration, "Camera move duration was not loaded");
+			Assert.AreEqual(TimeSpan.FromSeconds(4.2), _cameraWrapperMock.Object.CameraMoveDuration, "Camera move duration was not loaded");
 		}
 
 		[TestMethod]
@@ -109,7 +110,7 @@
 			_shortcutViews.Add(3, new CameraPosition { Position = new Vector3(2, 3, 1), RotationX = 5, RotationY = 6, ZoomLevel = 4 });
 			_shortcutViews.Add(4, new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 });
 
-			var modData = new ModData { CameraMoveDuration = 4.2f };
+			var modData = new ModData { CameraMoveDuration = TimeSpan.FromSeconds(4.2) };
 			modData.CameraPositions.Add(0, new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 });
 			modData.CameraPositions.Add(5, new CameraPosition { Position = new Vector3(6, 5, 4), RotationX = 3, RotationY = 2, ZoomLevel = 1 });
 
@@ -127,7 +128,7 @@
 			Assert.AreEqual(new CameraPosition { Position = new Vector3(6, 5, 4), RotationX = 3, RotationY = 2, ZoomLevel = 1 }, _shortcutViews[5], "Camera position with key 5 was not loaded correctly");
 
 			Assert.AreEqual(2, _shortcutViews.Count, "Wrong count of camera positions");
-			Assert.AreEqual(4.2f, _cameraWrapperMock.Object.CameraMoveDuration, "Camera move duration was not loaded");
+			Assert.AreEqual(TimeSpan.FromSeconds(4.2), _cameraWrapperMock.Object.CameraMoveDuration, "Camera move duration was not loaded");
 		}
 
 		[TestMethod]
@@ -159,13 +160,13 @@
 		[TestMethod]
 		public void Serializing_WithoutCameraPositions_ModDataIsSerialized()
 		{
-			_cameraWrapperMock.SetupGet(w => w.CameraMoveDuration).Returns(2.1f);
+			_cameraWrapperMock.SetupGet(w => w.CameraMoveDuration).Returns(TimeSpan.FromSeconds(2.1));
 
 			_serializerMock
 				.Setup(s => s.Serialize(It.IsAny<ModData>()))
 				.Returns<ModData>(modData =>
 				{
-					Assert.AreEqual(2.1f, modData.CameraMoveDuration, "Camera move duration was not saved");
+					Assert.AreEqual(TimeSpan.FromSeconds(2.1), modData.CameraMoveDuration, "Camera move duration was not saved");
 					Assert.AreEqual(0, modData.CameraPositions.Count, "Wrong count of camera positions");
 
 					return "SerializationResult";
@@ -186,13 +187,13 @@
 			_shortcutViews.Add(0, new CameraPosition { Position = new Vector3(3, 2, 1), RotationX = 6, RotationY = 5, ZoomLevel = 4 });
 			_shortcutViews.Add(3, new CameraPosition { Position = new Vector3(2, 3, 1), RotationX = 5, RotationY = 6, ZoomLevel = 4 });
 
-			_cameraWrapperMock.SetupGet(w => w.CameraMoveDuration).Returns(2.1f);
+			_cameraWrapperMock.SetupGet(w => w.CameraMoveDuration).Returns(TimeSpan.FromSeconds(2.1));
 
 			_serializerMock
 				.Setup(s => s.Serialize(It.IsAny<ModData>()))
 				.Returns<ModData>(modData =>
 				{
-					Assert.AreEqual(2.1f, modData.CameraMoveDuration, "Camera move duration was not saved");
+					Assert.AreEqual(TimeSpan.FromSeconds(2.1), modData.CameraMoveDuration, "Camera move duration was not saved");
 					Assert.AreEqual(2, modData.CameraPositions.Count, "Wrong count of camera positions");
 					Assert.IsTrue(modData.CameraPositions.ContainsKey(0), "Camera position with key 0 was not saved");
 					Assert.IsTrue(modData.CameraPositions.ContainsKey(3), "Camera position with key 3 was not saved");

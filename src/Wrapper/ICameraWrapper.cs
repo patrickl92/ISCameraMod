@@ -1,5 +1,6 @@
 ﻿namespace ISCameraMod.Wrapper
 {
+	using System;
 	using ISCameraMod.Model;
 
 	/// <summary>
@@ -8,9 +9,9 @@
 	public interface ICameraWrapper
 	{
 		/// <summary>
-		/// Gets or sets the duration for moving the camera to its target position (in seconds).
+		/// Gets or sets the duration for moving the camera to its target position.
 		/// </summary>
-		float CameraMoveDuration { get; set; }
+		TimeSpan CameraMoveDuration { get; set; }
 
 		/// <summary>
 		/// Updates the movement of the camera.

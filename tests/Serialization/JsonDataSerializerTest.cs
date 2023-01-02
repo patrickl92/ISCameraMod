@@ -1,5 +1,6 @@
 ﻿namespace ISCameraModTest.Serialization
 {
+	using System;
 	using ISCameraMod.Model;
 	using ISCameraMod.Serialization;
 	using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,7 +21,7 @@
 		[TestMethod]
 		public void Serialize_RoundtripTest_DataIsDeserializedCorrectly()
 		{
-			var modData = new ModData { CameraMoveDuration = 2.1f };
+			var modData = new ModData { CameraMoveDuration = TimeSpan.FromSeconds(2.1) };
 			modData.CameraPositions.Add(0, new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 });
 			modData.CameraPositions.Add(5, new CameraPosition { Position = new Vector3(6, 5, 4), RotationX = 3, RotationY = 2, ZoomLevel = 1 });
 
@@ -29,7 +30,7 @@
 			var result = target.Deserialize(dataString);
 
 			Assert.IsNotNull(result, "Deserialized mod data must not be null");
-			Assert.AreEqual(2.1f, result.CameraMoveDuration, "Camera move duration was not deserialized correctly");
+			Assert.AreEqual(TimeSpan.FromSeconds(2.1), result.CameraMoveDuration, "Camera move duration was not deserialized correctly");
 			Assert.AreEqual(2, result.CameraPositions.Count, "Wrong count of camera positions");
 			Assert.IsTrue(result.CameraPositions.ContainsKey(0), "Camera position with key 0 was not deserialized");
 			Assert.IsTrue(result.CameraPositions.ContainsKey(5), "Camera position with key 5 was not deserialized");
@@ -75,7 +76,31 @@
 			var result = target.Deserialize(data);
 
 			Assert.IsNotNull(result);
-			Assert.AreEqual(4.2f, result.CameraMoveDuration, "Camera move duration was not deserialized correctly");
+			Assert.AreEqual(TimeSpan.FromSeconds(4.2), result.CameraMoveDuration, "Camera move duration was not deserialized correctly");
+		}
+
+		[TestMethod]
+		public void Deserialize_V1_CameraMoveDurationIsZero_ReturnsModDataWithDeserializedCameraMoveDuration()
+		{
+			var data = @"{""CameraMoveDuration"":0,""CameraPositions"":[],""Version"":1}";
+
+			var target = CreateTarget();
+			var result = target.Deserialize(data);
+
+			Assert.IsNotNull(result);
+			Assert.AreEqual(TimeSpan.Zero, result.CameraMoveDuration, "Camera move duration was not deserialized correctly");
+		}
+
+		[TestMethod]
+		public void Deserialize_V1_CameraMoveDurationIsNegative_ReturnsModDataWithDeserializedCameraMoveDuration()
+		{
+			var data = @"{""CameraMoveDuration"":-1,""CameraPositions"":[],""Version"":1}";
+
+			var target = CreateTarget();
+			var result = target.Deserialize(data);
+
+			Assert.IsNotNull(result);
+			Assert.AreEqual(TimeSpan.Zero, result.CameraMoveDuration, "Camera move duration was not deserialized correctly");
 		}
 
 		[TestMethod]
