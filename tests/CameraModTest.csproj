@@ -78,7 +78,7 @@
   <ItemGroup>
     <Compile Include="CameraModTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Serialization\CameraModSerializerTest.cs" />
+    <Compile Include="Serialization\JsonDataSerializerTest.cs" />
     <Compile Include="ShortcutViewHandlerTest.cs" />
   </ItemGroup>
   <ItemGroup>

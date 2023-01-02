@@ -58,7 +58,7 @@
     <Compile Include="ShortcutViewHandler.cs" />
     <Compile Include="Model\CameraPosition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Serialization\CameraModSerializer.cs" />
+    <Compile Include="Serialization\JsonDataSerializer.cs" />
     <Compile Include="Serialization\SerializableVersionInfo.cs" />
     <Compile Include="Serialization\V1\SerializableCameraPositionV1.cs" />
     <Compile Include="Serialization\V1\SerializableModDataV1.cs" />

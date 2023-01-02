@@ -1,13 +1,12 @@
 ﻿namespace ISCameraModTest.Serialization
 {
-	using System.Collections.Generic;
 	using ISCameraMod.Model;
 	using ISCameraMod.Serialization;
 	using Microsoft.VisualStudio.TestTools.UnitTesting;
 	using UnityEngine;
 
 	[TestClass]
-	public class CameraModSerializerTest
+	public class JsonDataSerializerTest
 	{
 		[TestMethod]
 		public void Serialize_NullInputData_ReturnsNull()
@@ -143,9 +142,9 @@
 			Assert.IsNull(result);
 		}
 
-		private CameraModSerializer CreateTarget()
+		private JsonDataSerializer CreateTarget()
 		{
-			return new CameraModSerializer(null);
+			return new JsonDataSerializer(null);
 		}
 	}
 }

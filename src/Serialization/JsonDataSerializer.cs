@@ -1,6 +1,5 @@
 ﻿namespace ISCameraMod.Serialization
 {
-	using System.Collections.Generic;
 	using ISCameraMod.Model;
 	using ISCameraMod.Serialization.V1;
 	using ISCameraMod.Wrapper;
@@ -8,17 +7,17 @@
 	using UnityEngine;
 
 	/// <summary>
-	/// The default serializer, which uses JSON for serializing and deserializing the mod data.
+	/// A serializer which uses JSON for serializing and deserializing the mod data.
 	/// </summary>
-	public class CameraModSerializer : ISerializer
+	public class JsonDataSerializer : ISerializer
 	{
-		private readonly ILogger<CameraModSerializer> _logger;
+		private readonly ILogger<JsonDataSerializer> _logger;
 
 		/// <summary>
-		/// Creates a new instance of the <see cref="CameraModSerializer"/> class.
+		/// Creates a new instance of the <see cref="JsonDataSerializer"/> class.
 		/// </summary>
 		/// <param name="logger">The logger to use. Can be null.</param>
-		public CameraModSerializer(ILogger<CameraModSerializer> logger)
+		public JsonDataSerializer(ILogger<JsonDataSerializer> logger)
 		{
 			_logger = logger;
 		}

@@ -42,7 +42,7 @@
 		/// </summary>
 		public static void ResetFactoryFunctions()
 		{
-			CreateSerializerFunc = () => new CameraModSerializer(new ISLogger<CameraModSerializer>());
+			CreateSerializerFunc = () => new JsonDataSerializer(new ISLogger<JsonDataSerializer>());
 			CreateInputWrapperFunc = () => new UnityInputWrapper();
 			CreateCameraWrapperFunc = () => new ISCameraWrapper();
 			CreateShortcutViewHandlerFunc = (inputWrapper, cameraWrapper) => new ShortcutViewHandler(inputWrapper, cameraWrapper, new ISLogger<ShortcutViewHandler>());
