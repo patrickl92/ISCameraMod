@@ -8,7 +8,7 @@
 	using UnityEngine;
 
 	/// <summary>
-	/// The default serializer, which uses JSON for serializing and deserializing the camera positions.
+	/// The default serializer, which uses JSON for serializing and deserializing the mod data.
 	/// </summary>
 	public class CameraModSerializer : ISerializer
 	{
@@ -24,85 +24,82 @@
 		}
 
 		/// <summary>
-		/// Serializes the camera positions into a JSON string.
+		/// Serializes the mod data into a JSON string.
 		/// </summary>
-		/// <param name="cameraPositions">The camera positions to serialize.</param>
-		/// <returns>A JSON string containing the camera positions.</returns>
-		public string Serialize(IReadOnlyDictionary<int, CameraPosition> cameraPositions)
+		/// <param name="modData">The mod data to serialize.</param>
+		/// <returns>A JSON string containing the serialized mod data, or null, if the mod data is null.</returns>
+		public string Serialize(ModData modData)
 		{
-			if (cameraPositions == null)
+			if (modData == null)
 			{
 				return null;
 			}
 
-			var serializableCameraPositions = new SerializableCameraPositionsV1();
+			var serializableCameraPositions = new SerializableModDataV1();
 
-			foreach (var entry in cameraPositions)
+			foreach (var entry in modData.CameraPositions)
 			{
 				serializableCameraPositions.CameraPositions.Add(new SerializableCameraPositionV1(entry.Key, entry.Value));
 			}
-
-			Log("Serializing " + serializableCameraPositions.CameraPositions.Count + " camera position(s)");
 
 			return JsonConvert.SerializeObject(serializableCameraPositions, Formatting.None);
 		}
 
 		/// <summary>
-		/// Deserializes the camera positions from a JSON string.
+		/// Deserializes the mod data from a JSON string.
 		/// </summary>
-		/// <param name="data">The JSON string containing the camera positions.</param>
-		/// <returns>The deserialized camera positions, or an empty dictionary, if the deserialization fails for any reason.</returns>
-		public IReadOnlyDictionary<int, CameraPosition> Deserialize(string data)
+		/// <param name="dataString">The JSON string containing the serialized mod data.</param>
+		/// <returns>The deserialized mod data, or null, if the deserialization of the data has failed.</returns>
+		public ModData Deserialize(string dataString)
 		{
-			if (data != null)
+			if (dataString == null)
 			{
-				SerializableVersionInfo versionInfo;
-
-				try
-				{
-					versionInfo = JsonConvert.DeserializeObject<SerializableVersionInfo>(data);
-				}
-				catch (JsonReaderException exception)
-				{
-					Log($"Could not deserialize data as JSON: {exception.Message}");
-					versionInfo = null;
-				}
-
-				if (versionInfo != null)
-				{
-					Log($"Version of data to load: {versionInfo.Version}");
-
-					switch (versionInfo.Version)
-					{
-						case 1:
-							return DeserializeV1(data);
-						default:
-							Log("Unsupported data version");
-							break;
-					}
-				}
-				else
-				{
-					Log("Deserialized version info is null");
-				}
+				return null;
 			}
 
-			return new Dictionary<int, CameraPosition>();
+			SerializableVersionInfo versionInfo;
+
+			try
+			{
+				versionInfo = JsonConvert.DeserializeObject<SerializableVersionInfo>(dataString);
+			}
+			catch (JsonReaderException exception)
+			{
+				Log($"Could not deserialize data as JSON: {exception.Message}");
+				return null;
+			}
+
+			if (versionInfo == null)
+			{
+				Log("Deserialized version info is null");
+				return null;
+			}
+
+			Log($"Version of data to load: {versionInfo.Version}");
+
+			switch (versionInfo.Version)
+			{
+				case 1:
+					return DeserializeV1(dataString);
+				default:
+					Log("Unsupported data version");
+					return null;
+			}
 		}
 
-		private IReadOnlyDictionary<int, CameraPosition> DeserializeV1(string data)
+		private ModData DeserializeV1(string data)
 		{
-			var result = new Dictionary<int, CameraPosition>();
+			var result = new ModData();
 
-			var serializableCameraPositions = JsonConvert.DeserializeObject<SerializableCameraPositionsV1>(data);
+			var serializableCameraPositions = JsonConvert.DeserializeObject<SerializableModDataV1>(data);
 			if (serializableCameraPositions != null)
 			{
 				foreach (var serializablePosition in serializableCameraPositions.CameraPositions)
 				{
-					if (result.ContainsKey(serializablePosition.NumpadKey))
+					if (result.CameraPositions.ContainsKey(serializablePosition.NumpadKey))
 					{
 						Log($"Multiple entries with numpad key '{serializablePosition.NumpadKey}', replacing already loaded camera position");
-						result.Remove(serializablePosition.NumpadKey);
+						result.CameraPositions.Remove(serializablePosition.NumpadKey);
 					}
 
 					var cameraPosition = new CameraPosition
@@ -113,7 +110,7 @@
 						ZoomLevel = serializablePosition.ZoomLevel
 					};
 
-					result.Add(serializablePosition.NumpadKey, cameraPosition);
+					result.CameraPositions.Add(serializablePosition.NumpadKey, cameraPosition);
 				}
 			}
 

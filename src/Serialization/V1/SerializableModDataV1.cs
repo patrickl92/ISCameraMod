@@ -7,12 +7,12 @@
 	/// Represents a list of serialized camera positions with data version 1.
 	/// </summary>
 	[Serializable]
-	public class SerializableCameraPositionsV1 : SerializableVersionInfo
+	public class SerializableModDataV1 : SerializableVersionInfo
 	{
 		/// <summary>
-		/// Creates a new instance of the <see cref="SerializableCameraPositionsV1"/> class.
+		/// Creates a new instance of the <see cref="SerializableModDataV1"/> class.
 		/// </summary>
-		public SerializableCameraPositionsV1()
+		public SerializableModDataV1()
 		{
 			Version = 1;
 			CameraPositions = new List<SerializableCameraPositionV1>();

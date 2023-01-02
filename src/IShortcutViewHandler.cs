@@ -10,7 +10,7 @@
 	public interface IShortcutViewHandler
 	{
 		/// <summary>
-		/// Gets the current shortcut views.
+		/// Gets a dictionary which contains the shortcut views.
 		/// The key of the dictionary is the associated numpad key of the camera position.
 		/// </summary>
 		Dictionary<int, CameraPosition> ShortcutViews { get; }

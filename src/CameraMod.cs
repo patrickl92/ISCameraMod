@@ -1,7 +1,9 @@
 ﻿namespace ISCameraMod
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Runtime.Serialization;
+	using ISCameraMod.Model;
 	using ISCameraMod.Serialization;
 	using ISCameraMod.Wrapper;
 	using Newtonsoft.Json;
@@ -89,7 +91,11 @@
 		[OnSerializing]
 		private void OnSerializing(StreamingContext context)
 		{
-			_serializedData = _serializer.Serialize(_shortcutViewHandler.ShortcutViews);
+			var modData = new ModData();
+
+			CopyCameraPositions(_shortcutViewHandler.ShortcutViews, modData.CameraPositions);
+
+			_serializedData = _serializer.Serialize(modData);
 		}
 
 		/// <summary>
@@ -100,13 +106,18 @@
 		[OnDeserialized]
 		private void OnDeserialized(StreamingContext context)
 		{
-			var loadedViews = _serializer.Deserialize(_serializedData);
+			var modData = _serializer.Deserialize(_serializedData) ?? new ModData();
 
-			_shortcutViewHandler.ShortcutViews.Clear();
+			CopyCameraPositions(modData.CameraPositions, _shortcutViewHandler.ShortcutViews);
+		}
 
-			foreach (var entry in loadedViews)
+		private void CopyCameraPositions(Dictionary<int, CameraPosition> source, Dictionary<int, CameraPosition> target)
+		{
+			target.Clear();
+
+			foreach (var entry in source)
 			{
-				_shortcutViewHandler.ShortcutViews.Add(entry.Key, entry.Value);
+				target.Add(entry.Key, entry.Value);
 			}
 		}
 	}

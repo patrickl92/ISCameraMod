@@ -53,6 +53,7 @@
     <Compile Include="CameraMod.cs" />
     <Compile Include="CameraModFactory.cs" />
     <Compile Include="IShortcutViewHandler.cs" />
+    <Compile Include="Model\ModData.cs" />
     <Compile Include="Serialization\ISerializer.cs" />
     <Compile Include="ShortcutViewHandler.cs" />
     <Compile Include="Model\CameraPosition.cs" />
@@ -60,7 +61,7 @@
     <Compile Include="Serialization\CameraModSerializer.cs" />
     <Compile Include="Serialization\SerializableVersionInfo.cs" />
     <Compile Include="Serialization\V1\SerializableCameraPositionV1.cs" />
-    <Compile Include="Serialization\V1\SerializableCameraPositionsV1.cs" />
+    <Compile Include="Serialization\V1\SerializableModDataV1.cs" />
     <Compile Include="Wrapper\ICameraWrapper.cs" />
     <Compile Include="Wrapper\ISCameraWrapper.cs" />
     <Compile Include="Wrapper\UnityInputWrapper.cs" />

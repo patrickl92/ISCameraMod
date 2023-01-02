@@ -1,25 +1,24 @@
 ﻿namespace ISCameraMod.Serialization
 {
-	using System.Collections.Generic;
 	using ISCameraMod.Model;
 
 	/// <summary>
-	/// Interface for serializing the camera positions.
+	/// Interface for serializing the mod data.
 	/// </summary>
 	public interface ISerializer
 	{
 		/// <summary>
-		/// Serializes the camera positions into a string value.
+		/// Serializes the mod data into a string value.
 		/// </summary>
-		/// <param name="cameraPositions">The camera positions to serialize.</param>
-		/// <returns>A string containing the camera positions.</returns>
-		string Serialize(IReadOnlyDictionary<int, CameraPosition> cameraPositions);
+		/// <param name="modData">The mod data to serialize.</param>
+		/// <returns>A string containing the serialized mod data.</returns>
+		string Serialize(ModData modData);
 
 		/// <summary>
-		/// Deserializes the camera positions from a string value.
+		/// Deserializes the mod data from a string value.
 		/// </summary>
-		/// <param name="data">The string containing the camera positions.</param>
-		/// <returns>The deserialized camera positions</returns>
-		IReadOnlyDictionary<int, CameraPosition> Deserialize(string data);
+		/// <param name="dataString">The string containing the serialized mod data.</param>
+		/// <returns>The deserialized mod data.</returns>
+		ModData Deserialize(string dataString);
 	}
 }

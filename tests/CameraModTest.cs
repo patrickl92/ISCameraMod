@@ -69,7 +69,7 @@
 		[TestMethod]
 		public void LoadAndStart_DeserializedInstanceWithoutData_InitializesCorrectly()
 		{
-			_serializerMock.Setup(s => s.Deserialize(null)).Returns(new Dictionary<int, CameraPosition>());
+			_serializerMock.Setup(s => s.Deserialize(null)).Returns(() => null);
 
 			var target = CreateTargetFromJsonWithoutSerializedData();
 			target.Load();
@@ -81,13 +81,11 @@
 		[TestMethod]
 		public void LoadAndStart_DeserializedInstanceWithData_InitializesCorrectly()
 		{
-			var cameraPositions = new Dictionary<int, CameraPosition>
-			{
-				{0, new CameraPosition {Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6}},
-				{5, new CameraPosition {Position = new Vector3(6, 5, 4), RotationX = 3, RotationY = 2, ZoomLevel = 1}}
-			};
+			var modData = new ModData();
+			modData.CameraPositions.Add(0, new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 });
+			modData.CameraPositions.Add(5, new CameraPosition { Position = new Vector3(6, 5, 4), RotationX = 3, RotationY = 2, ZoomLevel = 1 });
 
-			_serializerMock.Setup(s => s.Deserialize("TheData")).Returns(cameraPositions);
+			_serializerMock.Setup(s => s.Deserialize("TheData")).Returns(modData);
 
 			var target = CreateTargetWithSerializedData("TheData");
 			target.Load();
@@ -109,13 +107,11 @@
 			_shortcutViews.Add(3, new CameraPosition { Position = new Vector3(2, 3, 1), RotationX = 5, RotationY = 6, ZoomLevel = 4 });
 			_shortcutViews.Add(4, new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 });
 
-			var cameraPositions = new Dictionary<int, CameraPosition>
-			{
-				{0, new CameraPosition {Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6}},
-				{5, new CameraPosition {Position = new Vector3(6, 5, 4), RotationX = 3, RotationY = 2, ZoomLevel = 1}}
-			};
+			var modData = new ModData();
+			modData.CameraPositions.Add(0, new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 });
+			modData.CameraPositions.Add(5, new CameraPosition { Position = new Vector3(6, 5, 4), RotationX = 3, RotationY = 2, ZoomLevel = 1 });
 
-			_serializerMock.Setup(s => s.Deserialize("TheData")).Returns(cameraPositions);
+			_serializerMock.Setup(s => s.Deserialize("TheData")).Returns(modData);
 
 			var target = CreateTargetWithSerializedData("TheData");
 			target.Load();
@@ -157,12 +153,40 @@
 		}
 
 		[TestMethod]
-		public void Serializing_DataIsSerialized()
+		public void Serializing_WithoutCameraPositions_ModDataIsSerialized()
 		{
-			_serializerMock.Setup(s => s.Serialize(_shortcutViews)).Returns("SerializationResult");
+			_serializerMock.Setup(s => s.Serialize(It.Is<ModData>(d => d.CameraPositions.Count == 0))).Returns("SerializationResult");
 
 			var target = CreateTarget();
-			
+
+			var jsonString = JsonConvert.SerializeObject(target);
+			var json = (JObject)JsonConvert.DeserializeObject(jsonString);
+
+			Assert.AreEqual("SerializationResult", json["SerializedData"]);
+			Assert.AreEqual(1, json.Count, "JSON must only have one property");
+		}
+
+		[TestMethod]
+		public void Serializing_WithCameraPositions_ModDataIsSerialized()
+		{
+			_shortcutViews.Add(0, new CameraPosition { Position = new Vector3(3, 2, 1), RotationX = 6, RotationY = 5, ZoomLevel = 4 });
+			_shortcutViews.Add(3, new CameraPosition { Position = new Vector3(2, 3, 1), RotationX = 5, RotationY = 6, ZoomLevel = 4 });
+
+			_serializerMock
+				.Setup(s => s.Serialize(It.IsAny<ModData>()))
+				.Returns<ModData>(modData =>
+				{
+					Assert.AreEqual(2, modData.CameraPositions.Count, "Wrong count of camera positions");
+					Assert.IsTrue(modData.CameraPositions.ContainsKey(0), "Camera position with key 0 was not saved");
+					Assert.IsTrue(modData.CameraPositions.ContainsKey(3), "Camera position with key 3 was not saved");
+					Assert.AreEqual(new CameraPosition { Position = new Vector3(3, 2, 1), RotationX = 6, RotationY = 5, ZoomLevel = 4 }, modData.CameraPositions[0], "Camera position with key 0 was not saved correctly");
+					Assert.AreEqual(new CameraPosition { Position = new Vector3(2, 3, 1), RotationX = 5, RotationY = 6, ZoomLevel = 4 }, modData.CameraPositions[3], "Camera position with key 35 was not saved correctly");
+
+					return "SerializationResult";
+				});
+
+			var target = CreateTarget();
+
 			var jsonString = JsonConvert.SerializeObject(target);
 			var json = (JObject)JsonConvert.DeserializeObject(jsonString);
 
