@@ -4,7 +4,7 @@
 	using System.Collections.Generic;
 
 	/// <summary>
-	/// Represents a list of serialized camera positions with data version 1.
+	/// Represents a serializable mod data with data version 1.
 	/// </summary>
 	[Serializable]
 	public class SerializableModDataV1 : SerializableVersionInfo
