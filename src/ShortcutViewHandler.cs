@@ -40,26 +40,20 @@
 		/// <summary>
 		/// Gets called every frame to perform the business logic.
 		///  </summary>
-		/// <returns>True if the shortcut views have been changed during that frame, otherwise false.</returns>
-		public bool FrameUpdate()
+		public void FrameUpdate()
 		{
-			var shortcutViewsChanged = false;
-
 			var numpadKey = _inputWrapper.GetPressedNumpadKey();
 			if (numpadKey.HasValue && _cameraWrapper.IsPlayerCameraActive())
 			{
 				if (_inputWrapper.IsSaveModifierKeyPressed())
 				{
 					SavePosition(numpadKey.Value);
-					shortcutViewsChanged = true;
 				}
 				else
 				{
 					ApplyPosition(numpadKey.Value);
 				}
 			}
-
-			return shortcutViewsChanged;
 		}
 
 		private void SavePosition(int numpadKey)

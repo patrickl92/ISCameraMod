@@ -1,6 +1,7 @@
 ﻿namespace ISCameraMod
 {
 	using System;
+	using System.Runtime.Serialization;
 	using ISCameraMod.Serialization;
 	using ISCameraMod.Wrapper;
 	using Newtonsoft.Json;
@@ -22,13 +23,13 @@
 	[Serializable]
 	public class CameraMod : Mod
 	{
-		[JsonIgnore] // Do not serialize this field
+		[NonSerialized] // Do not serialize this field
 		private readonly ISerializer _serializer;
 
-		[JsonIgnore] // Do not serialize this field
+		[NonSerialized] // Do not serialize this field
 		private readonly ICameraWrapper _cameraWrapper;
 
-		[JsonIgnore] // Do not serialize this field
+		[NonSerialized] // Do not serialize this field
 		private readonly IShortcutViewHandler _shortcutViewHandler;
 
 		/// <summary>
@@ -51,19 +52,9 @@
 
 		/// <summary>
 		/// Gets called when the mod is loaded.
-		/// Deserialization of this class has already been done at this stage.
-		/// The serialized data is deserialized into the internal mod data here.
 		/// </summary>
 		public override void Load()
 		{
-			var loadedViews = _serializer.Deserialize(_serializedData);
-
-			_shortcutViewHandler.ShortcutViews.Clear();
-
-			foreach (var entry in loadedViews)
-			{
-				_shortcutViewHandler.ShortcutViews.Add(entry.Key, entry.Value);
-			}
 		}
 
 		/// <summary>
@@ -75,17 +66,12 @@
 
 		/// <summary>
 		/// Gets called once per frame.
-		/// The call is forwarded to the required instances and the current mod data is serialized if something has changed.
+		/// The call is forwarded to the required instances.
 		/// </summary>
 		public override void FrameUpdate()
 		{
 			_cameraWrapper.FrameUpdate();
-
-			if (_shortcutViewHandler.FrameUpdate())
-			{
-				// New/changed camera position, serialize the data so it will be persisted when the mod class is serialized by InfraSpace
-				_serializedData = _serializer.Serialize(_shortcutViewHandler.ShortcutViews);
-			}
+			_shortcutViewHandler.FrameUpdate();
 		}
 
 		/// <summary>
@@ -93,6 +79,35 @@
 		/// </summary>
 		public override void SimulationUdpate()
 		{
+		}
+
+		/// <summary>
+		/// Gets called when the mod is being serialized (e.g. the game is saved).
+		/// The internal mod data is serialized here.
+		/// </summary>
+		/// <param name="context">The parameter is not used.</param>
+		[OnSerializing]
+		private void OnSerializing(StreamingContext context)
+		{
+			_serializedData = _serializer.Serialize(_shortcutViewHandler.ShortcutViews);
+		}
+
+		/// <summary>
+		/// Gets called when the mod was deserialized (e.g. a saved game is loaded).
+		/// The serialized data is deserialized into the internal mod data here.
+		/// </summary>
+		/// <param name="context">The parameter is not used.</param>
+		[OnDeserialized]
+		private void OnDeserialized(StreamingContext context)
+		{
+			var loadedViews = _serializer.Deserialize(_serializedData);
+
+			_shortcutViewHandler.ShortcutViews.Clear();
+
+			foreach (var entry in loadedViews)
+			{
+				_shortcutViewHandler.ShortcutViews.Add(entry.Key, entry.Value);
+			}
 		}
 	}
 }

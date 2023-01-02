@@ -57,29 +57,29 @@
 		}
 
 		[TestMethod]
-		public void Load_ManuallyInstantiatedObject_InitializesCorrectly()
+		public void LoadAndStart_ManuallyInstantiatedObject_InitializesCorrectly()
 		{
-			_serializerMock.Setup(s => s.Deserialize(null)).Returns(new Dictionary<int, CameraPosition>());
-
 			var target = CreateTarget();
 			target.Load();
+			target.Start();
 
 			Assert.AreEqual(0, _shortcutViews.Count, "No camera positions must be loaded");
 		}
 
 		[TestMethod]
-		public void Load_DeserializedInstanceWithoutData_InitializesCorrectly()
+		public void LoadAndStart_DeserializedInstanceWithoutData_InitializesCorrectly()
 		{
 			_serializerMock.Setup(s => s.Deserialize(null)).Returns(new Dictionary<int, CameraPosition>());
 
 			var target = CreateTargetFromJsonWithoutSerializedData();
 			target.Load();
+			target.Start();
 
 			Assert.AreEqual(0, _shortcutViews.Count, "No camera positions must be loaded");
 		}
 
 		[TestMethod]
-		public void Load_DeserializedInstanceWithData_InitializesCorrectly()
+		public void LoadAndStart_DeserializedInstanceWithData_InitializesCorrectly()
 		{
 			var cameraPositions = new Dictionary<int, CameraPosition>
 			{
@@ -91,6 +91,7 @@
 
 			var target = CreateTargetWithSerializedData("TheData");
 			target.Load();
+			target.Start();
 
 			Assert.IsTrue(_shortcutViews.ContainsKey(0), "Camera position with key 0 was not loaded");
 			Assert.AreEqual(new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 }, _shortcutViews[0], "Camera position with key 0 was not loaded correctly");
@@ -102,7 +103,7 @@
 		}
 
 		[TestMethod]
-		public void Load_DeserializedInstanceWithData_ReplacesExistingCameraPositions()
+		public void LoadAndStart_DeserializedInstanceWithData_ReplacesExistingCameraPositions()
 		{
 			_shortcutViews.Add(0, new CameraPosition { Position = new Vector3(3, 2, 1), RotationX = 6, RotationY = 5, ZoomLevel = 4 });
 			_shortcutViews.Add(3, new CameraPosition { Position = new Vector3(2, 3, 1), RotationX = 5, RotationY = 6, ZoomLevel = 4 });
@@ -118,6 +119,7 @@
 
 			var target = CreateTargetWithSerializedData("TheData");
 			target.Load();
+			target.Start();
 
 			Assert.IsTrue(_shortcutViews.ContainsKey(0), "Camera position with key 0 was not loaded");
 			Assert.AreEqual(new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 }, _shortcutViews[0], "Camera position with key 0 was not loaded correctly");
@@ -132,7 +134,7 @@
 		public void FrameUpdate_CallsFrameUpdateOfCameraWrapper()
 		{
 			_cameraWrapperMock.Setup(w => w.FrameUpdate());
-			_shortcutViewHandlerMock.Setup(h => h.FrameUpdate()).Returns(false);
+			_shortcutViewHandlerMock.Setup(h => h.FrameUpdate());
 
 			var target = CreateTarget();
 
@@ -142,40 +144,30 @@
 		}
 
 		[TestMethod]
-		public void FrameUpdate_ShortcutViewHandlerReturnsFalse_DataIsNotSerialized()
+		public void FrameUpdate_CallsFrameUpdateOfShortcutViewHandler()
 		{
 			_cameraWrapperMock.Setup(w => w.FrameUpdate());
-			_shortcutViewHandlerMock.Setup(h => h.FrameUpdate()).Returns(false);
+			_shortcutViewHandlerMock.Setup(h => h.FrameUpdate());
 
 			var target = CreateTarget();
 
 			target.FrameUpdate();
 
 			_shortcutViewHandlerMock.Verify(h => h.FrameUpdate(), Times.Once, "Method was not called");
-
-			var jsonString = JsonConvert.SerializeObject(target);
-			var json = (JObject)JsonConvert.DeserializeObject(jsonString);
-
-			Assert.AreEqual(JTokenType.Null, json["SerializedData"].Type);
 		}
 
 		[TestMethod]
-		public void FrameUpdate_ShortcutViewHandlerReturnsTrue_DataIsSerialized()
+		public void Serializing_DataIsSerialized()
 		{
-			_cameraWrapperMock.Setup(w => w.FrameUpdate());
 			_serializerMock.Setup(s => s.Serialize(_shortcutViews)).Returns("SerializationResult");
-			_shortcutViewHandlerMock.Setup(h => h.FrameUpdate()).Returns(true);
 
 			var target = CreateTarget();
-
-			target.FrameUpdate();
-
-			_shortcutViewHandlerMock.Verify(h => h.FrameUpdate(), Times.Once, "Method was not called");
-
+			
 			var jsonString = JsonConvert.SerializeObject(target);
 			var json = (JObject)JsonConvert.DeserializeObject(jsonString);
 
 			Assert.AreEqual("SerializationResult", json["SerializedData"]);
+			Assert.AreEqual(1, json.Count, "JSON must only have one property");
 		}
 
 		private CameraMod CreateTarget()

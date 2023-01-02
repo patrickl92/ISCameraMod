@@ -37,31 +37,31 @@
 		}
 
 		[TestMethod]
-		public void FrameUpdate_NoNumpadKeyPressed_ReturnsFalse()
+		public void FrameUpdate_NoNumpadKeyPressed_NothingHappens()
 		{
 			_inputWrapperMock.Setup(w => w.GetPressedNumpadKey()).Returns(() => null);
 
 			var target = CreateTarget();
-			var result = target.FrameUpdate();
+			target.FrameUpdate();
 
-			Assert.IsFalse(result);
+			// MockBehavior.Strict would throw an exception if an unexpected method of the mocks is called
 		}
 
 		[TestMethod]
-		public void FrameUpdate_NumpadKeyPressedAndPlayerCameraNotActive_ReturnsFalse()
+		public void FrameUpdate_NumpadKeyPressedAndPlayerCameraNotActive_NothingHappens()
 		{
 			_inputWrapperMock.Setup(w => w.GetPressedNumpadKey()).Returns(3);
 
 			_cameraWrapperMock.Setup(w => w.IsPlayerCameraActive()).Returns(false);
 
 			var target = CreateTarget();
-			var result = target.FrameUpdate();
+			target.FrameUpdate();
 
-			Assert.IsFalse(result);
+			// MockBehavior.Strict would throw an exception if an unexpected method of the mocks is called
 		}
 
 		[TestMethod]
-		public void FrameUpdate_NumpadKeyPressedAndPlayerCameraActive_NoSavedCameraPosition_ReturnsFalse()
+		public void FrameUpdate_NumpadKeyPressedAndPlayerCameraActive_NoSavedCameraPosition_NothingHappens()
 		{
 			_inputWrapperMock.Setup(w => w.GetPressedNumpadKey()).Returns(3);
 			_inputWrapperMock.Setup(w => w.IsSaveModifierKeyPressed()).Returns(false);
@@ -69,13 +69,13 @@
 			_cameraWrapperMock.Setup(w => w.IsPlayerCameraActive()).Returns(true);
 
 			var target = CreateTarget();
-			var result = target.FrameUpdate();
+			target.FrameUpdate();
 
-			Assert.IsFalse(result);
+			// MockBehavior.Strict would throw an exception if an unexpected method of the mocks is called
 		}
 
 		[TestMethod]
-		public void FrameUpdate_NumpadKeyPressedAndPlayerCameraActive_HasSavedCameraPosition_AppliesCameraPositionAndReturnsFalse()
+		public void FrameUpdate_NumpadKeyPressedAndPlayerCameraActive_HasSavedCameraPosition_AppliesCameraPosition()
 		{
 			_inputWrapperMock.Setup(w => w.GetPressedNumpadKey()).Returns(3);
 			_inputWrapperMock.Setup(w => w.IsSaveModifierKeyPressed()).Returns(false);
@@ -87,16 +87,14 @@
 
 			target.ShortcutViews.Add(3, new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 });
 
-			var result = target.FrameUpdate();
+			target.FrameUpdate();
 
 			_cameraWrapperMock.Verify(w => w.MovePlayerCameraToPosition(new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 }), Times.Once);
 			_cameraWrapperMock.Verify(w => w.MovePlayerCameraToPosition(It.IsAny<CameraPosition>()), Times.Once, "Only one camera position must be set");
-
-			Assert.IsFalse(result);
 		}
 
 		[TestMethod]
-		public void FrameUpdate_NumpadKeyWithSaveModifierPressedAndPlayerCameraActive_NoSavedCameraPosition_SavesCameraPositionAndReturnsTrue()
+		public void FrameUpdate_NumpadKeyWithSaveModifierPressedAndPlayerCameraActive_NoSavedCameraPosition_SavesCameraPosition()
 		{
 			_inputWrapperMock.Setup(w => w.GetPressedNumpadKey()).Returns(3);
 			_inputWrapperMock.Setup(w => w.IsSaveModifierKeyPressed()).Returns(true);
@@ -105,16 +103,15 @@
 			_cameraWrapperMock.Setup(w => w.GetPlayerCameraPosition()).Returns(new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 });
 
 			var target = CreateTarget();
-			var result = target.FrameUpdate();
+			target.FrameUpdate();
 
 			Assert.AreEqual(1, target.ShortcutViews.Count, "No camera position was saved");
 			Assert.IsTrue(target.ShortcutViews.ContainsKey(3), "Camera position was saved with a wrong key");
 			Assert.AreEqual(new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 }, target.ShortcutViews[3]);
-			Assert.IsTrue(result);
 		}
 
 		[TestMethod]
-		public void FrameUpdate_NumpadKeyWithSaveModifierPressedAndPlayerCameraActive_HasSavedCameraPosition_OverridesCameraPositionAndReturnsTrue()
+		public void FrameUpdate_NumpadKeyWithSaveModifierPressedAndPlayerCameraActive_HasSavedCameraPosition_OverridesCameraPosition()
 		{
 			_inputWrapperMock.Setup(w => w.GetPressedNumpadKey()).Returns(3);
 			_inputWrapperMock.Setup(w => w.IsSaveModifierKeyPressed()).Returns(true);
@@ -127,14 +124,13 @@
 			target.ShortcutViews.Add(3, new CameraPosition { Position = new Vector3(6, 5, 4), RotationX = 3, RotationY = 2, ZoomLevel = 1 });
 			target.ShortcutViews.Add(4, new CameraPosition { Position = new Vector3(5, 6, 4), RotationX = 2, RotationY = 1, ZoomLevel = 3 });
 
-			var result = target.FrameUpdate();
+			target.FrameUpdate();
 
 			Assert.AreEqual(2, target.ShortcutViews.Count, "Wrong count of camera positions");
 			Assert.IsTrue(target.ShortcutViews.ContainsKey(3), "Camera position was saved with a wrong key");
 			Assert.IsTrue(target.ShortcutViews.ContainsKey(4), "Camera position with key 4 was removed");
 			Assert.AreEqual(new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 }, target.ShortcutViews[3], "Camera position with key 3 was not updated");
 			Assert.AreEqual(new CameraPosition { Position = new Vector3(5, 6, 4), RotationX = 2, RotationY = 1, ZoomLevel = 3}, target.ShortcutViews[4], "Camera position with key 4 must not have changed");
-			Assert.IsTrue(result);
 		}
 
 		private ShortcutViewHandler CreateTarget()
