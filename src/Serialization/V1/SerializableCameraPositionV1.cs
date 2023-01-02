@@ -4,7 +4,7 @@
 	using ISCameraMod.Model;
 
 	/// <summary>
-	/// Represents a serialized a <see cref="CameraPosition"/> with its associated numpad key.
+	/// Represents a serializable <see cref="CameraPosition"/> with its associated numpad key.
 	/// </summary>
 	[Serializable]
 	public class SerializableCameraPositionV1
