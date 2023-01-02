@@ -1,5 +1,6 @@
 ﻿namespace ISCameraMod.Wrapper
 {
+	using System.Linq;
 	using ISCameraMod.Model;
 	using UnityEngine;
 
@@ -14,7 +15,7 @@
 		private const float CameraMoveDuration = 0.5f;
 
 		private AnimatedCameraPosition _animatedCameraPosition;
-
+		
 		/// <summary>
 		/// Updates the movement of the camera.
 		/// </summary>
@@ -81,7 +82,12 @@
 				return false;
 			}
 
-			// TODO: Check if the spaceship view is active
+			if (WorldScripts.Inst.simulator.simulationBlockers.OfType<SpaceScene>().Any())
+			{
+				// Spaceship view is active
+				return false;
+			}
+
 			return true;
 		}
 
