@@ -34,13 +34,7 @@
 				return null;
 			}
 
-			var serializableCameraPositions = new SerializableModDataV1();
-
-			foreach (var entry in modData.CameraPositions)
-			{
-				serializableCameraPositions.CameraPositions.Add(new SerializableCameraPositionV1(entry.Key, entry.Value));
-			}
-
+			var serializableCameraPositions = new SerializableModDataV1(modData);
 			return JsonConvert.SerializeObject(serializableCameraPositions, Formatting.None);
 		}
 
@@ -88,29 +82,27 @@
 
 		private ModData DeserializeV1(string data)
 		{
-			var result = new ModData();
-
-			var serializableCameraPositions = JsonConvert.DeserializeObject<SerializableModDataV1>(data);
-			if (serializableCameraPositions != null)
+			var serializableModData = JsonConvert.DeserializeObject<SerializableModDataV1>(data);
+			if (serializableModData == null)
 			{
-				foreach (var serializablePosition in serializableCameraPositions.CameraPositions)
+				Log("Deserialized mod data is null");
+				return null;
+			}
+
+			var result = new ModData
+			{
+				CameraMoveDuration = serializableModData.CameraMoveDuration
+			};
+
+			foreach (var serializablePosition in serializableModData.CameraPositions)
+			{
+				if (result.CameraPositions.ContainsKey(serializablePosition.NumpadKey))
 				{
-					if (result.CameraPositions.ContainsKey(serializablePosition.NumpadKey))
-					{
-						Log($"Multiple entries with numpad key '{serializablePosition.NumpadKey}', replacing already loaded camera position");
-						result.CameraPositions.Remove(serializablePosition.NumpadKey);
-					}
-
-					var cameraPosition = new CameraPosition
-					{
-						Position = new Vector3(serializablePosition.PositionX, serializablePosition.PositionY, serializablePosition.PositionZ),
-						RotationX = serializablePosition.RotationX,
-						RotationY = serializablePosition.RotationY,
-						ZoomLevel = serializablePosition.ZoomLevel
-					};
-
-					result.CameraPositions.Add(serializablePosition.NumpadKey, cameraPosition);
+					Log($"Multiple entries with numpad key '{serializablePosition.NumpadKey}', replacing already loaded camera position");
+					result.CameraPositions.Remove(serializablePosition.NumpadKey);
 				}
+
+				result.CameraPositions.Add(serializablePosition.NumpadKey, serializablePosition.ToCameraPosition());
 			}
 
 			return result;

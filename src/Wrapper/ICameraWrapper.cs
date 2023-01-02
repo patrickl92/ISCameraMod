@@ -8,6 +8,11 @@
 	public interface ICameraWrapper
 	{
 		/// <summary>
+		/// Gets or sets the duration for moving the camera to its target position (in seconds).
+		/// </summary>
+		float CameraMoveDuration { get; set; }
+
+		/// <summary>
 		/// Updates the movement of the camera.
 		/// </summary>
 		void FrameUpdate();

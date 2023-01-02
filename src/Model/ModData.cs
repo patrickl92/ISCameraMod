@@ -16,6 +16,11 @@
 		}
 
 		/// <summary>
+		/// Gets or sets the duration for moving the camera to its target position (in seconds).
+		/// </summary>
+		public float CameraMoveDuration { get; set; }
+
+		/// <summary>
 		/// Gets a dictionary which contains the shortcut views.
 		/// The key of the dictionary is the associated numpad key of the camera position.
 		/// </summary>

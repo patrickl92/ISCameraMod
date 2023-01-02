@@ -2,6 +2,7 @@
 {
 	using System;
 	using ISCameraMod.Model;
+	using UnityEngine;
 
 	/// <summary>
 	/// Represents a serializable <see cref="CameraPosition"/> with its associated numpad key.
@@ -67,5 +68,20 @@
 		/// Gets or sets the zoom level of the camera.
 		/// </summary>
 		public float ZoomLevel { get; set; }
+
+		/// <summary>
+		/// Converts the serialized value to a <see cref="CameraPosition"/>.
+		/// </summary>
+		/// <returns>The created camera position.</returns>
+		public CameraPosition ToCameraPosition()
+		{
+			return new CameraPosition
+			{
+				Position = new Vector3(PositionX, PositionY, PositionZ),
+				RotationX = RotationX,
+				RotationY = RotationY,
+				ZoomLevel = ZoomLevel
+			};
+		}
 	}
 }

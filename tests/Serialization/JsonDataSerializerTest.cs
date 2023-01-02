@@ -20,7 +20,7 @@
 		[TestMethod]
 		public void Serialize_RoundtripTest_DataIsDeserializedCorrectly()
 		{
-			var modData = new ModData();
+			var modData = new ModData { CameraMoveDuration = 2.1f };
 			modData.CameraPositions.Add(0, new CameraPosition { Position = new Vector3(1, 2, 3), RotationX = 4, RotationY = 5, ZoomLevel = 6 });
 			modData.CameraPositions.Add(5, new CameraPosition { Position = new Vector3(6, 5, 4), RotationX = 3, RotationY = 2, ZoomLevel = 1 });
 
@@ -29,6 +29,7 @@
 			var result = target.Deserialize(dataString);
 
 			Assert.IsNotNull(result, "Deserialized mod data must not be null");
+			Assert.AreEqual(2.1f, result.CameraMoveDuration, "Camera move duration was not deserialized correctly");
 			Assert.AreEqual(2, result.CameraPositions.Count, "Wrong count of camera positions");
 			Assert.IsTrue(result.CameraPositions.ContainsKey(0), "Camera position with key 0 was not deserialized");
 			Assert.IsTrue(result.CameraPositions.ContainsKey(5), "Camera position with key 5 was not deserialized");
@@ -66,21 +67,33 @@
 		}
 
 		[TestMethod]
-		public void Deserialize_V1_NoSavedCameraPositions_ReturnsModDataWithEmptyCameraPositions()
+		public void Deserialize_V1_CameraMoveDuration_ReturnsModDataWithDeserializedCameraMoveDuration()
 		{
-			var data = @"{""CameraPositions"":[],""Version"":1}";
+			var data = @"{""CameraMoveDuration"":4.2,""CameraPositions"":[],""Version"":1}";
 
 			var target = CreateTarget();
 			var result = target.Deserialize(data);
 
 			Assert.IsNotNull(result);
-			Assert.AreEqual(0, result.CameraPositions.Count);
+			Assert.AreEqual(4.2f, result.CameraMoveDuration, "Camera move duration was not deserialized correctly");
+		}
+
+		[TestMethod]
+		public void Deserialize_V1_NoSavedCameraPositions_ReturnsModDataWithEmptyCameraPositions()
+		{
+			var data = @"{""CameraMoveDuration"":4.2,""CameraPositions"":[],""Version"":1}";
+
+			var target = CreateTarget();
+			var result = target.Deserialize(data);
+
+			Assert.IsNotNull(result);
+			Assert.AreEqual(0, result.CameraPositions.Count, "Wrong count of camera positions");
 		}
 
 		[TestMethod]
 		public void Deserialize_V1_MultipleSavedCameraPositions_ReturnsModDataWithLoadedCameraPositions()
 		{
-			var data = @"{""CameraPositions"":[{""NumpadKey"":0,""PositionX"":1797.94482,""PositionY"":60.0,""PositionZ"":1741.16931,""RotationX"":-5.6245923,""RotationY"":842.4311,""ZoomLevel"":2.57508087},{""NumpadKey"":1,""PositionX"":1535.61731,""PositionY"":60.0,""PositionZ"":1982.5896,""RotationX"":35.210907,""RotationY"":819.3053,""ZoomLevel"":2.241456},{""NumpadKey"":5,""PositionX"":1568.50171,""PositionY"":63.0,""PositionZ"":1968.88916,""RotationX"":-20.0030479,""RotationY"":959.7377,""ZoomLevel"":1.94266248}],""Version"":1}";
+			var data = @"{""CameraMoveDuration"":4.2,""CameraPositions"":[{""NumpadKey"":0,""PositionX"":1797.94482,""PositionY"":60.0,""PositionZ"":1741.16931,""RotationX"":-5.6245923,""RotationY"":842.4311,""ZoomLevel"":2.57508087},{""NumpadKey"":1,""PositionX"":1535.61731,""PositionY"":60.0,""PositionZ"":1982.5896,""RotationX"":35.210907,""RotationY"":819.3053,""ZoomLevel"":2.241456},{""NumpadKey"":5,""PositionX"":1568.50171,""PositionY"":63.0,""PositionZ"":1968.88916,""RotationX"":-20.0030479,""RotationY"":959.7377,""ZoomLevel"":1.94266248}],""Version"":1}";
 
 			var target = CreateTarget();
 			var result = target.Deserialize(data);
@@ -110,7 +123,7 @@
 		[TestMethod]
 		public void Deserialize_V1_DuplicatedSavedCameraPositions_ReturnsModDataWithLoadedCameraPositions()
 		{
-			var data = @"{""CameraPositions"":[{""NumpadKey"":0,""PositionX"":1797.94482,""PositionY"":60.0,""PositionZ"":1741.16931,""RotationX"":-5.6245923,""RotationY"":842.4311,""ZoomLevel"":2.57508087},{""NumpadKey"":1,""PositionX"":1535.61731,""PositionY"":60.0,""PositionZ"":1982.5896,""RotationX"":35.210907,""RotationY"":819.3053,""ZoomLevel"":2.241456},{""NumpadKey"":1,""PositionX"":1568.50171,""PositionY"":63.0,""PositionZ"":1968.88916,""RotationX"":-20.0030479,""RotationY"":959.7377,""ZoomLevel"":1.94266248}],""Version"":1}";
+			var data = @"{""CameraMoveDuration"":4.2,""CameraPositions"":[{""NumpadKey"":0,""PositionX"":1797.94482,""PositionY"":60.0,""PositionZ"":1741.16931,""RotationX"":-5.6245923,""RotationY"":842.4311,""ZoomLevel"":2.57508087},{""NumpadKey"":1,""PositionX"":1535.61731,""PositionY"":60.0,""PositionZ"":1982.5896,""RotationX"":35.210907,""RotationY"":819.3053,""ZoomLevel"":2.241456},{""NumpadKey"":1,""PositionX"":1568.50171,""PositionY"":63.0,""PositionZ"":1968.88916,""RotationX"":-20.0030479,""RotationY"":959.7377,""ZoomLevel"":1.94266248}],""Version"":1}";
 
 			var target = CreateTarget();
 			var result = target.Deserialize(data);

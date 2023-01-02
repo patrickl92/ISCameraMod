@@ -91,7 +91,10 @@
 		[OnSerializing]
 		private void OnSerializing(StreamingContext context)
 		{
-			var modData = new ModData();
+			var modData = new ModData
+			{
+				CameraMoveDuration = _cameraWrapper.CameraMoveDuration
+			};
 
 			CopyCameraPositions(_shortcutViewHandler.ShortcutViews, modData.CameraPositions);
 
@@ -106,9 +109,13 @@
 		[OnDeserialized]
 		private void OnDeserialized(StreamingContext context)
 		{
-			var modData = _serializer.Deserialize(_serializedData) ?? new ModData();
+			var modData = _serializer.Deserialize(_serializedData);
+			if (modData != null)
+			{
+				_cameraWrapper.CameraMoveDuration = modData.CameraMoveDuration;
 
-			CopyCameraPositions(modData.CameraPositions, _shortcutViewHandler.ShortcutViews);
+				CopyCameraPositions(modData.CameraPositions, _shortcutViewHandler.ShortcutViews);
+			}
 		}
 
 		private void CopyCameraPositions(Dictionary<int, CameraPosition> source, Dictionary<int, CameraPosition> target)

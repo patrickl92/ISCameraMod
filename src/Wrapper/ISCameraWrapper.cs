@@ -10,12 +10,20 @@
 	/// </summary>
 	internal class ISCameraWrapper : ICameraWrapper
 	{
-		/// <summary>
-		/// The duration for moving the camera to its target position (in seconds).
-		/// </summary>
-		private const float CameraMoveDuration = 0.5f;
-
 		private AnimatedCameraPosition _animatedCameraPosition;
+
+		/// <summary>
+		/// Creates a new instance of the <see cref="ISCameraWrapper"/> class.
+		/// </summary>
+		public ISCameraWrapper()
+		{
+			CameraMoveDuration = 0.5f;
+		}
+
+		/// <summary>
+		/// Gets or sets the duration for moving the camera to its target position (in seconds).
+		/// </summary>
+		public float CameraMoveDuration { get; set; }
 
 		/// <summary>
 		/// Updates the movement of the camera.
